@@ -276,7 +276,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ei405")
 }],
-"loop": false,
+"loop": 0,
 "name": &"Fly",
 "speed": 9.0
 }, {
@@ -305,7 +305,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_2u7jv")
 }],
-"loop": false,
+"loop": 0,
 "name": &"Fly To Idle",
 "speed": 9.0
 }, {
@@ -334,7 +334,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_3xym2")
 }],
-"loop": true,
+"loop": 1,
 "name": &"Grabbed",
 "speed": 10.0
 }, {
@@ -354,12 +354,12 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_cnnru")
 }],
-"loop": true,
+"loop": 1,
 "name": &"Idle Aurafarm",
 "speed": 5.0
 }, {
 "frames": [],
-"loop": true,
+"loop": 1,
 "name": &"Jarona Punch",
 "speed": 5.0
 }, {
@@ -379,7 +379,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ma08v")
 }],
-"loop": true,
+"loop": 1,
 "name": &"Jarona Windup",
 "speed": 5.0
 }, {
@@ -390,7 +390,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_epypp")
 }],
-"loop": true,
+"loop": 1,
 "name": &"Skateboard",
 "speed": 5.0
 }, {
@@ -413,7 +413,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_4d7sh")
 }],
-"loop": false,
+"loop": 0,
 "name": &"Skateboard Trick",
 "speed": 6.0
 }, {
@@ -433,7 +433,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_nr8wp")
 }],
-"loop": true,
+"loop": 1,
 "name": &"Standing",
 "speed": 5.0
 }, {
@@ -450,7 +450,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_c4wnb")
 }],
-"loop": true,
+"loop": 1,
 "name": &"Walking Forward",
 "speed": 5.0
 }, {
@@ -467,7 +467,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_fshgd")
 }],
-"loop": true,
+"loop": 1,
 "name": &"Walking Forward Left",
 "speed": 5.0
 }, {
@@ -484,7 +484,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_xfyss")
 }],
-"loop": true,
+"loop": 1,
 "name": &"Walking Forward Right",
 "speed": 5.0
 }, {
@@ -501,7 +501,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_k73cj")
 }],
-"loop": true,
+"loop": 1,
 "name": &"Walking Left",
 "speed": 5.0
 }, {
@@ -518,7 +518,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_cjlbh")
 }],
-"loop": true,
+"loop": 1,
 "name": &"Walking Right",
 "speed": 5.0
 }]
