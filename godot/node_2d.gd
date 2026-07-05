@@ -15,64 +15,23 @@ var flesh = preload("res://voicelines/flesh.wav")
 var sustingus = preload("res://voicelines/sustingus.wav")
 var frandisco = preload("res://voicelines/frandisco.wav")
 
-var speed_x = 0.0
-var speed_y = 0.0
+var speed = 100
+var direction = Vector2(1,0)
+var screen_size = Vector2()
+var window_size = Vector2(300,300)
+var is_dragging = false
+var drag_offset = Vector2()
+var idle_timer = 0.0
+var is_idling = false
 
-var pause_for_animation: bool = false
+var target_speed = Vector2(0.0, 0.0)
 
 func _ready() -> void:
-	pause_for_animation = false
-	make_fly()
 	pass
 	
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	# movement stuff goes here
 	
-	self.position + Vector2(speed_x, speed_y) * delta
-	
-	# everything past this point will only play
-	# after the current animation is finished
-	if pause_for_animation:
-		if !$Flowery/Sprite.is_playing():
-			pause_for_animation = false
-			match current_state:
-				FloweryState.FLYING:
-					speed_y = -100
-					make_idle_from_fly()
-				FloweryState.FLYTOIDLE:
-					speed_y = 0
-					$Flowery/Sprite.offset = Vector2(17,3)
-					make_idle()
-		else:
-			return
-	
 
-	
 	pass
-	
-func make_fly() -> void:
-	play_line(falling)
-	$Flowery/Sprite.animation = "Fly"
-	$Flowery/Sprite.play()
-	pause_for_animation = true
-	current_state = FloweryState.FLYING
-	
-func make_idle_from_fly() -> void:
-	await get_tree().create_timer(2).timeout
-
-	$Flowery/Sprite.animation = "Fly To Idle"
-	$Flowery/Sprite.play()
-	pause_for_animation = true
-	current_state = FloweryState.FLYTOIDLE
-
-func make_idle() -> void:
-	$Flowery/Sprite.animation = "Idle Aurafarm"
-	$Flowery/Sprite.play()
-	current_state = FloweryState.IDLE
-
-func play_line(line) -> void:
-	if !$Flowery/Voice.is_playing():
-		$Flowery/Voice.stream = line
-		$Flowery/Voice.play()
-	
