@@ -28,3 +28,4 @@ scale = Vector2(2.4999983, 2.4999983)
 shape = SubResource("RectangleShape2D_0e48y")
 
 [node name="Voice" type="AudioStreamPlayer" parent="." unique_id=1078663303]
+max_polyphony = 5

@@ -47,7 +47,7 @@ func _on_area_input(_viewport, event, _shape_idx):
 			drag_offset = mouse_pos - win_pos
 		else:
 			play_animation("Standing")
-			play_line(sustingus)
+			play_line(falling)
 			is_dragging = false
 
 # play a specific animation
@@ -71,6 +71,6 @@ func _physics_process(_delta: float) -> void:
 	pass
 	
 func play_line(line) -> void:
-	if !voice.is_playing():
+	if voice.stream != line:
 		voice.stream = line
-		voice.play()
+	voice.play()
