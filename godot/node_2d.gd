@@ -47,7 +47,7 @@ func _on_area_input(_viewport, event, _shape_idx):
 			drag_offset = mouse_pos - win_pos
 		else:
 			play_animation("Standing")
-			play_line(falling)
+			play_line(sustingus)
 			is_dragging = false
 
 # play a specific animation

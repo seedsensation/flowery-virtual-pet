@@ -27,6 +27,4 @@ position = Vector2(151.25, 145)
 scale = Vector2(2.4999983, 2.4999983)
 shape = SubResource("RectangleShape2D_0e48y")
 
-[node name="Voice" type="AudioStreamPlayer2D" parent="." unique_id=2435875]
-position = Vector2(150, 150)
-scale = Vector2(2.5, 2.5)
+[node name="Voice" type="AudioStreamPlayer" parent="." unique_id=1078663303]
