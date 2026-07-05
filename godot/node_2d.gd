@@ -24,10 +24,12 @@ var drag_offset = Vector2()
 var idle_timer = 0.0
 var is_idling = false
 
-var target_speed = Vector2(0.0, 0.0)
+var gravity = Vector2(0,9.81)
+
+var on_ground = false
 
 @onready var sprite = $Sprite
-@onready var area = $Area2D
+@onready var area = $Sprite/Area
 
 func _ready() -> void:
 	screen_size = Vector2(DisplayServer.screen_get_size())
@@ -39,12 +41,21 @@ func _on_area_input(_viewport, event, _shape_idx):
 		print("clicked")
 		if event.pressed:
 			is_dragging = true
+			play_animation("Grabbed")
 			var mouse_pos = Vector2(DisplayServer.mouse_get_position())
 			var win_pos = Vector2(DisplayServer.window_get_position())
 			drag_offset = mouse_pos - win_pos
 		else:
+			play_animation("Standing")
 			is_dragging = false
-	
+
+func play_animation(name: String) -> void:
+	sprite.play(name)
+	var texture = sprite.sprite_frames.get_frame_texture(name,0)
+	print(DisplayServer.window_get_size())
+	DisplayServer.window_set_size(Vector2i(texture.get_width() * sprite.scale.x, texture.get_height() * sprite.scale.y))
+	print(DisplayServer.window_get_size())
+	pass
 
 func _physics_process(_delta: float) -> void:
 	if is_dragging:
