@@ -54,6 +54,38 @@ region = Rect2(1859, 338, 87, 74)
 atlas = ExtResource("1_qbebv")
 region = Rect2(1948, 338, 87, 74)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_qbebv"]
+atlas = ExtResource("1_qbebv")
+region = Rect2(1623, 115, 27, 63)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_inkko"]
+atlas = ExtResource("1_qbebv")
+region = Rect2(1652, 115, 27, 63)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ry3ix"]
+atlas = ExtResource("1_qbebv")
+region = Rect2(1681, 115, 27, 63)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5xqvt"]
+atlas = ExtResource("1_qbebv")
+region = Rect2(1710, 115, 27, 63)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gpb3c"]
+atlas = ExtResource("1_qbebv")
+region = Rect2(1739, 115, 27, 63)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pjepy"]
+atlas = ExtResource("1_qbebv")
+region = Rect2(1768, 115, 27, 63)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r00v5"]
+atlas = ExtResource("1_qbebv")
+region = Rect2(1797, 115, 27, 63)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3xym2"]
+atlas = ExtResource("1_qbebv")
+region = Rect2(1826, 115, 27, 63)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_24dk6"]
 atlas = ExtResource("1_qbebv")
 region = Rect2(1325, 40, 53, 57)
@@ -276,6 +308,35 @@ animations = [{
 "loop": false,
 "name": &"Fly To Idle",
 "speed": 9.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qbebv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_inkko")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ry3ix")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5xqvt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gpb3c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pjepy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r00v5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3xym2")
+}],
+"loop": true,
+"name": &"Grabbed",
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,

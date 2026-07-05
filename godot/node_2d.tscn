@@ -4,27 +4,28 @@
 [ext_resource type="SpriteFrames" uid="uid://b04p35qttpw6h" path="res://flowery_sprites.tres" id="1_wtcfe"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0e48y"]
-size = Vector2(29.300003, 61.112495)
+size = Vector2(24.750015, 62.850044)
 
 [node name="Node2D" type="Node2D" unique_id=262378832]
 script = ExtResource("1_epypp")
 
-[node name="Area2D" type="Area2D" parent="." unique_id=632899676]
-
-[node name="Collision" type="CollisionShape2D" parent="Area2D" unique_id=548573054]
-position = Vector2(158.375, 154.60939)
-scale = Vector2(2.4999995, 2.4999995)
-shape = SubResource("RectangleShape2D_0e48y")
-
-[node name="Sprite" type="Flowery" parent="." unique_id=1977332957]
+[node name="Sprite" type="AnimatedSprite2D" parent="." unique_id=1259539289]
+clip_children = 2
 texture_filter = 1
 texture_repeat = 1
-position = Vector2(152.5, 147.5)
-scale = Vector2(2.5, 2.5)
+position = Vector2(58, 140)
+scale = Vector2(4, 4)
 sprite_frames = ExtResource("1_wtcfe")
 animation = &"Fly To Idle"
-frame = 7
-frame_progress = 1.0
+
+[node name="Area" type="Area2D" parent="Sprite" unique_id=632899676]
+position = Vector2(-60.999996, -58.999996)
+scale = Vector2(0.39999998, 0.39999998)
+
+[node name="Collision" type="CollisionShape2D" parent="Sprite/Area" unique_id=548573054]
+position = Vector2(151.25, 145)
+scale = Vector2(2.4999983, 2.4999983)
+shape = SubResource("RectangleShape2D_0e48y")
 
 [node name="Voice" type="AudioStreamPlayer2D" parent="." unique_id=2435875]
 position = Vector2(150, 150)
