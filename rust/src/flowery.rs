@@ -15,8 +15,8 @@ impl IAnimatedSprite2D for Flowery {
         Self { base }
     }
 
-    fn physics_process(&mut self, delta: f64) {
-        let radians = (std::f64::consts::PI * delta * 5.0) as f32;
-        self.base_mut().rotate(radians);
+    fn physics_process(&mut self, _delta: f64) {
+        //let radians = (std::f64::consts::PI * delta * 5.0) as f32;
+        //self.base_mut().rotate(radians);
     }
 }

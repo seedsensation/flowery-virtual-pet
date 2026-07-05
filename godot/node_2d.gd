@@ -26,12 +26,30 @@ var is_idling = false
 
 var target_speed = Vector2(0.0, 0.0)
 
+@onready var sprite = $Sprite
+@onready var area = $Area2D
+
 func _ready() -> void:
-	pass
+	screen_size = Vector2(DisplayServer.screen_get_size())
+	area.input_event.connect(_on_area_input)
+	
+func _on_area_input(_viewport, event, _shape_idx):
+	print("Hi")
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		print("clicked")
+		if event.pressed:
+			is_dragging = true
+			var mouse_pos = Vector2(DisplayServer.mouse_get_position())
+			var win_pos = Vector2(DisplayServer.window_get_position())
+			drag_offset = mouse_pos - win_pos
+		else:
+			is_dragging = false
 	
 
-func _process(_delta: float) -> void:
-	# movement stuff goes here
-	
+func _physics_process(_delta: float) -> void:
+	if is_dragging:
+		var mouse_pos = Vector2(DisplayServer.mouse_get_position())
+		var new_win_pos = mouse_pos - drag_offset
+		DisplayServer.window_set_position(Vector2i(new_win_pos))
 
 	pass
