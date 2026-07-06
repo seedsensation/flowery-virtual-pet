@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-use active_win_pos_rs::get_active_window;
+//use active_win_pos_rs::get_active_window;
 use godot::prelude::*;
 
 #[derive(Debug)]
@@ -30,18 +30,18 @@ impl Shape {
     }
 }
 
-pub fn get_window_shape() -> Option<Shape> {
-    match get_active_window() {
-        Ok(active_window) => Some(Shape {
-            pos: Vector2i::new(
-                active_window.position.x as i32,
-                active_window.position.y as i32,
-            ),
-            size: Vector2i::new(
-                active_window.position.width as i32,
-                active_window.position.height as i32,
-            ),
-        }),
-        Err(()) => None,
-    }
-}
+//pub fn get_window_shape() -> Option<Shape> {
+//    match get_active_window() {
+//        Ok(active_window) => Some(Shape {
+//            pos: Vector2i::new(
+//                active_window.position.x as i32,
+//                active_window.position.y as i32,
+//            ),
+//            size: Vector2i::new(
+//                active_window.position.width as i32,
+//                active_window.position.height as i32,
+//            ),
+//        }),
+//        Err(()) => None,
+//    }
+//}

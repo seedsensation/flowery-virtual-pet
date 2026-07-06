@@ -55,7 +55,7 @@ func _unhandled_input(event):
 	if event is InputEventMouseButton:
 		if !event.pressed and event.button_index == MOUSE_BUTTON_LEFT and is_dragging:
 			print(DisplayServer.mouse_get_position(),last_mouse_pos)
-			velocity = Vector2(DisplayServer.mouse_get_position() - last_mouse_pos) / 2.5
+			velocity = Vector2(DisplayServer.mouse_get_position() - last_mouse_pos) * Vector2(0.3, 0.5)
 			acceleration = Vector2(0,20)
 			play_animation("Fall")
 			is_dragging = false
