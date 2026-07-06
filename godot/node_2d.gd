@@ -54,10 +54,10 @@ func _unhandled_input(event):
 			is_dragging = false
 
 # play a specific animation
-func play_animation(name: String) -> void:
-	sprite.play(name)
+func play_animation(animation_name: String) -> void:
+	sprite.play(animation_name)
 	# get the texture
-	var texture = sprite.sprite_frames.get_frame_texture(name,0)
+	var texture = sprite.sprite_frames.get_frame_texture(animation_name,0)
 	# set window size to size of texture
 	DisplayServer.window_set_size(Vector2i(texture.get_width() * sprite.scale.x, texture.get_height() * sprite.scale.y))
 	pass
