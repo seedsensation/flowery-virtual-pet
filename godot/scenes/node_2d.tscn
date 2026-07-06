@@ -26,3 +26,7 @@ scale = Vector2(0.39999998, 0.39999998)
 position = Vector2(151.25, 145)
 scale = Vector2(2.4999983, 2.4999983)
 shape = SubResource("RectangleShape2D_0e48y")
+
+[connection signal="collision" from="." to="." method="_on_collision"]
+[connection signal="falling_from_height" from="." to="." method="_on_falling_from_height"]
+[connection signal="trapped" from="." to="." method="_on_trapped"]

@@ -19,7 +19,6 @@ struct Flowery {
 #[godot_api]
 impl INode2D for Flowery {
     fn init(base: Base<Node2D>) -> Self {
-        godot_print!("Hello, world!");
         let shape1 = Shape {
             pos: Vector2i { x: 0, y: 0 },
             size: Vector2i { x: 1, y: 1 },
@@ -28,7 +27,6 @@ impl INode2D for Flowery {
             pos: Vector2i { x: 0, y: 0 },
             size: Vector2i { x: 1, y: 2 },
         };
-        godot_print!("{}", collision_check(&shape1, &shape2));
 
         Self {
             primary_window: Shape::empty(),
@@ -73,10 +71,13 @@ impl Flowery {
 
         let window_position = window.get_position();
         //display_server.window_set_position(window_position + Vector2i::new(x as i32, y as i32));
-        if self.test_collision(self.velocity.to_int_vector()) {
-            godot_print!("COLLIDING WITH ACTIVE WINDOW");
-        } else {
-            godot_print!("NOT COLLIDING");
+
+        let sides = self.collision_sides();
+        if sides == Vector2::ZERO && self.will_collide() {
+            self.signals().trapped().emit();
+        } else if self.will_collide() {
+            self.signals().collision().emit(sides);
+        } else if sides == Vector2::ZERO {
             window.set_position(window_position + self.velocity.to_int_vector());
         }
     }
@@ -115,7 +116,11 @@ impl Flowery {
                 vector += new_vec;
             }
         }
-        vector.normalized()
+        if vector == Vector2::ZERO {
+            vector
+        } else {
+            vector.normalized()
+        }
     }
 
     #[signal]
@@ -123,6 +128,9 @@ impl Flowery {
 
     #[signal]
     fn trapped();
+
+    #[signal]
+    fn collision(direction: Vector2);
 }
 
 fn collision_check(a: &Shape, b: &Shape) -> bool {

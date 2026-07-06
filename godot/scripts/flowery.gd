@@ -81,13 +81,8 @@ func _physics_process(_delta: float) -> void:
 		self.move_to(Vector2(DisplayServer.mouse_get_position()) - drag_offset)
 		#self.velocity = Vector2(0,0)
 	else:
-		if will_collide():
-			if sprite.animation != "Condescend":
-				play_animation("Condescend")
-			
-		else:
-			play_animation("Walking Forward Right")
-			self.move_and_slide()
+		play_animation("Walking Forward Right")
+		self.move_and_slide()
 
 func play_line(line) -> void:
 	var voice_line: AudioStreamPlayer = AudioStreamPlayer.new()
@@ -104,3 +99,17 @@ func jarona_voice() -> void:
 
 func is_playing(player: AudioStreamPlayer) -> bool:
 	return player.playing
+
+
+func _on_trapped() -> void:
+	print("I'M TRAPPED!")
+	pass # Replace with function body.
+
+
+func _on_collision(direction: Vector2) -> void:
+	print("I just hit something",direction)
+	pass # Replace with function body.
+
+
+func _on_falling_from_height() -> void:
+	pass # Replace with function body.
