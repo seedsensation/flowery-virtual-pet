@@ -105,6 +105,9 @@ impl Flowery {
             }),
         ) {
             window.set_position(window_position + self.velocity.to_int_vector());
+        } else {
+            godot_print!("Hit border");
+            self.signals().screen_border_collision().emit();
         }
     }
 

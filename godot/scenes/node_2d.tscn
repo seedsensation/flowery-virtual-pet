@@ -16,8 +16,8 @@ texture_repeat = 1
 position = Vector2(-1, -1)
 scale = Vector2(4, 4)
 sprite_frames = ExtResource("1_wtcfe")
-animation = &"Grabbed"
-frame_progress = 0.7456748
+animation = &"Fall"
+frame_progress = 0.2864593
 centered = false
 
 [node name="Area" type="Area2D" parent="Sprite" unique_id=632899676]
@@ -28,3 +28,5 @@ scale = Vector2(0.39999998, 0.39999998)
 position = Vector2(196.87503, 227.5)
 scale = Vector2(2.4999983, 2.4999983)
 shape = SubResource("RectangleShape2D_0e48y")
+
+[connection signal="screen_border_collision" from="." to="." method="_on_screen_border_collision"]
