@@ -17,7 +17,7 @@ position = Vector2(-1, -1)
 scale = Vector2(4, 4)
 sprite_frames = ExtResource("1_wtcfe")
 animation = &"Fall"
-frame_progress = 0.2864593
+frame_progress = 0.94377357
 centered = false
 
 [node name="Area" type="Area2D" parent="Sprite" unique_id=632899676]

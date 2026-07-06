@@ -18,6 +18,8 @@ var jarona4 = preload("res://voicelines/jarona4.wav")
 
 var status: Status = Status.IDLE
 
+var last_mouse_pos = Vector2()
+
 # set basic things
 var is_dragging = false
 var drag_offset = Vector2()
@@ -52,8 +54,9 @@ func _on_area_input(_viewport, event, _shape_idx):
 func _unhandled_input(event):
 	if event is InputEventMouseButton:
 		if !event.pressed and event.button_index == MOUSE_BUTTON_LEFT and is_dragging:
-			velocity = Vector2(0,0)
-			acceleration = Vector2(0,9.81)
+			print(DisplayServer.mouse_get_position(),last_mouse_pos)
+			velocity = Vector2(DisplayServer.mouse_get_position() - last_mouse_pos) / 2.5
+			acceleration = Vector2(0,20)
 			play_animation("Fall")
 			is_dragging = false
 			status = Status.FALLING
@@ -78,6 +81,8 @@ func _physics_process(delta: float) -> void:
 	if is_dragging:
 		# move him
 		self.move_to(Vector2(DisplayServer.mouse_get_position()) - drag_offset)
+		last_mouse_pos = DisplayServer.mouse_get_position()
+
 		#self.velocity = Vector2(0,0)
 	else:
 		self.move_and_slide()
