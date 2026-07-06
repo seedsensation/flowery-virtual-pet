@@ -1,7 +1,10 @@
+use crate::vector_cast::VectorCast;
 use godot::classes::{INode2D, Node2D};
 use godot::prelude::*;
 
 use super::window_management::{get_window_shape, Shape};
+
+const DISTANCE_TO_FALL: i32 = 100;
 
 #[derive(GodotClass)]
 #[class(base=Node2D)]
@@ -53,13 +56,9 @@ impl Flowery {
                     .unwrap()
                     .get_frame_texture(&animation, 0)
                     .unwrap();
-                let (width, height) = (texture.get_size() * sprite.get_scale()).to_tuple();
                 Shape {
                     pos: self.base().get_window().unwrap().get_position(),
-                    size: Vector2i {
-                        x: width as i32,
-                        y: height as i32,
-                    },
+                    size: (texture.get_size() * sprite.get_scale()).to_int_vector(),
                 }
             }
             _ => Shape::empty(),
@@ -73,14 +72,13 @@ impl Flowery {
         //let mut display_server = DisplayServer::singleton();
 
         let window_position = window.get_position();
-        let (x, y) = self.velocity.to_tuple();
         //display_server.window_set_position(window_position + Vector2i::new(x as i32, y as i32));
-        if self.check_collision() {
+        if self.test_collision(self.velocity.to_int_vector()) {
             godot_print!("COLLIDING WITH ACTIVE WINDOW");
         } else {
             godot_print!("NOT COLLIDING");
+            window.set_position(window_position + self.velocity.to_int_vector());
         }
-        window.set_position(window_position + Vector2i::new(x as i32, y as i32));
     }
 
     #[func]
@@ -93,9 +91,38 @@ impl Flowery {
     #[func]
     /// Returns true if Flowery is currently colliding with the active window
     pub fn check_collision(&self) -> bool {
-        let check = collision_check(&self.get_shape(), &self.primary_window);
-        check
+        collision_check(&self.get_shape(), &self.primary_window)
     }
+
+    #[func]
+    pub fn will_collide(&self) -> bool {
+        self.test_collision(self.velocity)
+    }
+
+    /// Returns true if the vector of movement would make Flowery collide with the active window
+    pub fn test_collision<T: VectorCast>(&self, vector: T) -> bool {
+        let mut new_shape = self.get_shape();
+        new_shape.pos += vector.to_int_vector();
+
+        collision_check(&new_shape, &self.primary_window)
+    }
+
+    fn collision_sides(&self) -> Vector2 {
+        let mut vector = Vector2::ZERO;
+        for (x, y) in [(1.0, 0.0), (-1.0, 0.0), (0.0, 1.0), (0.0, -1.0)] {
+            let new_vec = Vector2::new(x, y);
+            if self.test_collision(new_vec) {
+                vector += new_vec;
+            }
+        }
+        vector.normalized()
+    }
+
+    #[signal]
+    fn falling_from_height();
+
+    #[signal]
+    fn trapped();
 }
 
 fn collision_check(a: &Shape, b: &Shape) -> bool {

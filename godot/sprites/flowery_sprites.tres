@@ -2,6 +2,34 @@
 
 [ext_resource type="Texture2D" uid="uid://1hu185m0g2dp" path="res://sprites/flowery_sprites_transparent.png" id="1_qbebv"]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_k0qi4"]
+atlas = ExtResource("1_qbebv")
+region = Rect2(464, 804, 34, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dfjkc"]
+atlas = ExtResource("1_qbebv")
+region = Rect2(500, 804, 34, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ss74i"]
+atlas = ExtResource("1_qbebv")
+region = Rect2(536, 804, 34, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jxs0g"]
+atlas = ExtResource("1_qbebv")
+region = Rect2(572, 804, 34, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4jgp6"]
+atlas = ExtResource("1_qbebv")
+region = Rect2(608, 804, 34, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lxs2n"]
+atlas = ExtResource("1_qbebv")
+region = Rect2(644, 804, 34, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mlfie"]
+atlas = ExtResource("1_qbebv")
+region = Rect2(680, 804, 34, 64)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_wtcfe"]
 atlas = ExtResource("1_qbebv")
 region = Rect2(1697, 247, 33, 73)
@@ -260,6 +288,32 @@ region = Rect2(277, 164, 20, 59)
 
 [resource]
 animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k0qi4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dfjkc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ss74i")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jxs0g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4jgp6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lxs2n")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mlfie")
+}],
+"loop": 0,
+"name": &"Condescend",
+"speed": 9.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_wtcfe")

@@ -16,7 +16,7 @@ texture_repeat = 1
 position = Vector2(58, 140)
 scale = Vector2(4, 4)
 sprite_frames = ExtResource("1_wtcfe")
-animation = &"Walking Forward"
+animation = &"Condescend"
 
 [node name="Area" type="Area2D" parent="Sprite" unique_id=632899676]
 position = Vector2(-60.999996, -58.999996)

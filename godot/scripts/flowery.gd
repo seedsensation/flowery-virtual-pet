@@ -5,8 +5,10 @@ enum FloweryState {
 	WALKING, 
 	IDLE, 
 	AURAFARM,
-	FLYTOIDLE
+	FLYTOIDLE,
+	CONDESCEND
 	}
+enum Direction { LEFT, UP, RIGHT, DOWN }
 
 var current_state = FloweryState.IDLE
 
@@ -31,12 +33,15 @@ var drag_offset = Vector2()
 var idle_timer = 0.0
 var is_idling = false
 
+
 # easier to remember definitions of our specific nodes
 @onready var sprite = $Sprite
 @onready var area = $Sprite/Area
 
 # run as soon as the game launches
 func _ready() -> void:
+	velocity = Vector2i(1,0)
+
 	play_animation("Standing")
 	screen_size = Vector2(DisplayServer.screen_get_size())
 	area.input_event.connect(_on_area_input)
@@ -76,8 +81,13 @@ func _physics_process(_delta: float) -> void:
 		self.move_to(Vector2(DisplayServer.mouse_get_position()) - drag_offset)
 		#self.velocity = Vector2(0,0)
 	else:
-		self.move_and_slide()
-		get_window().position = get_window().position + Vector2i(1,0)
+		if will_collide():
+			if sprite.animation != "Condescend":
+				play_animation("Condescend")
+			
+		else:
+			play_animation("Walking Forward Right")
+			self.move_and_slide()
 
 func play_line(line) -> void:
 	var voice_line: AudioStreamPlayer = AudioStreamPlayer.new()
