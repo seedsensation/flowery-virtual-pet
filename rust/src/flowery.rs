@@ -1,15 +1,15 @@
-use godot::classes::{AnimatedSprite2D, IAnimatedSprite2D};
+use godot::classes::{INode2D, Node2D};
 use godot::prelude::*;
 
 #[derive(GodotClass)]
-#[class(base=AnimatedSprite2D)]
+#[class(base=Node2D)]
 struct Flowery {
-    base: Base<AnimatedSprite2D>,
+    base: Base<Node2D>,
 }
 
 #[godot_api]
-impl IAnimatedSprite2D for Flowery {
-    fn init(base: Base<AnimatedSprite2D>) -> Self {
+impl INode2D for Flowery {
+    fn init(base: Base<Node2D>) -> Self {
         godot_print!("Hello, world!");
 
         Self { base }
