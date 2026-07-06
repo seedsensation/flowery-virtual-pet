@@ -1,31 +1,15 @@
 use crate::vector_cast::VectorCast;
+use godot::classes::DisplayServer;
 use godot::classes::{INode2D, Node2D};
 use godot::prelude::*;
 
 use super::window_management::{get_window_shape, Shape};
-
-const SECONDS_TO_FALL: i32 = 100;
-
-#[derive(GodotConvert, Var, Export, Default, Clone, Copy, PartialEq, Debug)]
-#[godot(via = GString)]
-pub enum FloweryStatus {
-    #[default]
-    Idle,
-    Grabbed,
-    Walking,
-    Flying,
-    Sitting,
-    Falling,
-    Trapped,
-}
 
 #[derive(GodotClass)]
 #[class(base=Node2D)]
 struct Flowery {
     primary_window: Shape,
 
-    #[export]
-    status: FloweryStatus,
     #[var]
     idle_timer: f64,
     #[var]
@@ -56,7 +40,6 @@ impl INode2D for Flowery {
         Self {
             primary_window: Shape::empty(),
             ignore_collision: false,
-            status: FloweryStatus::Walking,
             idle_timer: 0.0,
             velocity: Vector2::new(1.0, 0.0),
             out_of_bounds: false,
@@ -100,32 +83,27 @@ impl Flowery {
     /// Move Flowery, and handle collision
     pub fn move_and_slide(&mut self) {
         let mut window = self.base().get_window().unwrap();
-        //let mut display_server = DisplayServer::singleton();
+        let display_server = DisplayServer::singleton();
+        let screen_size = display_server.screen_get_size();
 
         let window_position = window.get_position();
         //display_server.window_set_position(window_position + Vector2i::new(x as i32, y as i32));
 
-        if !self.ignore_collision && self.velocity != Vector2::ZERO && !self.out_of_bounds {
-            let sides = self.collision_sides();
-            if self.will_collide() && sides != Vector2::ZERO
-                || sides == Vector2::ZERO
-                    && self.will_collide()
-                    && self.get_shape().pos.y - self.primary_window.pos.y < 100
-            {
-                if self.get_shape().pos.y - self.primary_window.pos.y < 100 {
-                    self.move_to(Vector2i::new(
-                        self.get_shape().pos.x,
-                        self.primary_window.pos.y - self.get_shape().size.y,
-                    ));
-                }
-                self.signals().collision().emit(sides);
-            } else if sides == Vector2::ZERO && self.will_collide() {
-                godot_print!("Trapped");
-                self.signals().trapped().emit();
-            } else if sides == Vector2::ZERO {
-                window.set_position(window_position + self.velocity.to_int_vector());
-            }
-        } else if self.ignore_collision && self.velocity != Vector2::ZERO && !self.out_of_bounds {
+        let mut shape = self.get_shape();
+        shape.pos += self.velocity.to_int_vector();
+        if !shapes_overlap(
+            &shape,
+            &(Shape {
+                pos: Vector2i {
+                    x: 0,
+                    y: screen_size.y,
+                },
+                size: Vector2i {
+                    x: screen_size.x,
+                    y: 1,
+                },
+            }),
+        ) {
             window.set_position(window_position + self.velocity.to_int_vector());
         }
     }
@@ -137,60 +115,14 @@ impl Flowery {
         window.set_position(location);
     }
 
-    #[func]
-    /// Returns true if Flowery is currently colliding with the active window
-    pub fn check_collision(&self) -> bool {
-        collision_check(&self.get_shape(), &self.primary_window)
-    }
-
-    #[func]
-    pub fn will_collide(&self) -> bool {
-        if self.ignore_collision {
-            false
-        } else {
-            self.test_collision(self.velocity)
-        }
-    }
-
-    #[func]
-    pub fn update_status(&mut self, status: FloweryStatus) {
-        self.status = status;
-        self.signals().status_updated().emit(status);
-    }
-
-    /// Returns true if the vector of movement would make Flowery collide with the active window
-    pub fn test_collision<T: VectorCast>(&self, vector: T) -> bool {
-        let mut new_shape = self.get_shape();
-        new_shape.pos += vector.to_int_vector();
-
-        collision_check(&new_shape, &self.primary_window)
-    }
-
-    fn collision_sides(&self) -> Vector2 {
-        let mut vector = Vector2::ZERO;
-        for (x, y) in [(1.0, 0.0), (-1.0, 0.0), (0.0, 1.0), (0.0, -1.0)] {
-            let new_vec = Vector2::new(x, y);
-            if self.test_collision(new_vec) {
-                vector += new_vec;
-            }
-        }
-        vector.normalized_or_zero()
-    }
+    #[signal]
+    fn screen_border_collision();
 
     #[signal]
-    fn status_updated(status: FloweryStatus);
-
-    #[signal]
-    fn trapped();
-
-    #[signal]
-    fn collision(direction: Vector2);
-
-    #[signal]
-    fn out_of_bounds();
+    fn window_collision();
 }
 
-fn collision_check(a: &Shape, b: &Shape) -> bool {
+fn shapes_overlap(a: &Shape, b: &Shape) -> bool {
     // a.left < b.right &&
     // a.right > b.left &&
     // a.top > b.bottom &&

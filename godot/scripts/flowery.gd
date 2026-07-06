@@ -27,7 +27,9 @@ var time_of_next_action: int = range(10,20).pick_random()
 
 # run as soon as the game launches
 func _ready() -> void:
-	velocity = Vector2i(1,0)
+	velocity = Vector2i(0,0)
+	acceleration = Vector2(0,9.81)
+
 
 	play_animation("Standing")
 	screen_size = Vector2(DisplayServer.screen_get_size())
@@ -38,12 +40,11 @@ func _on_area_input(_viewport, event, _shape_idx):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		idle_timer = 0
 		if event.pressed:
-			update_status("Grabbed")
 			is_dragging = true
 			acceleration = Vector2()
+			play_animation("Grabbed")
 			velocity = Vector2()
 			jarona_voice()
-			play_animation("Grabbed")
 			var mouse_pos = Vector2(DisplayServer.mouse_get_position())
 			var win_pos = Vector2(DisplayServer.window_get_position())
 			drag_offset = mouse_pos - win_pos
@@ -51,9 +52,9 @@ func _on_area_input(_viewport, event, _shape_idx):
 func _unhandled_input(event):
 	if event is InputEventMouseButton:
 		if !event.pressed and event.button_index == MOUSE_BUTTON_LEFT and is_dragging:
-			update_status("Idle")
 			velocity = Vector2(0,0)
 			acceleration = Vector2(0,9.81)
+			play_animation("Standing")
 			is_dragging = false
 
 # play a specific animation
@@ -80,8 +81,6 @@ func _physics_process(delta: float) -> void:
 		self.move_to(Vector2(DisplayServer.mouse_get_position()) - drag_offset)
 		#self.velocity = Vector2(0,0)
 	else:
-		if self.velocity.y > 0 and idle_timer > 1 and status != "Falling":
-			update_status("Falling")
 		self.move_and_slide()
 
 func play_line(line) -> void:
@@ -102,45 +101,8 @@ func is_playing(player: AudioStreamPlayer) -> bool:
 
 
 func _on_trapped() -> void:
-	update_status("Trapped")
-	acceleration = Vector2()
-	velocity = Vector2()
-
 	pass # Replace with function body.
 
 
 func _on_collision(direction: Vector2) -> void:
-	play_line(forget_it)
-	play_animation("Condescend")
-	velocity = Vector2(0,0)
-	acceleration = Vector2(0,0)
-	update_status("Idle")
-	pass # Replace with function body.
-
-
-
-func _on_status_updated(status: String) -> void:
-	idle_timer = 0
-	match status:
-		"Idle":
-			pass
-		"Walking":
-			pass
-		"Flying":
-			play_line(mysterious_wind)
-			ignore_collision = true
-			velocity = Vector2(5, -3)
-			sprite.animation = "Mysterious Wind"
-			sprite.frame = 1
-			sprite.stop()
-			readjust_size()
-		"Sitting":
-			pass
-		"Falling":
-			play_animation("Fall")
-			ignore_collision = true
-			play_line(falling)
-			pass
-		"Grabbed":
-			ignore_collision = false
-	pass # Replace with function body.
+	pass # Replace with function body
