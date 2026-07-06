@@ -60,8 +60,7 @@ func _unhandled_input(event):
 			play_animation("Fall")
 			is_dragging = false
 			status = Status.FALLING
-			await sprite.animation_finished;
-			play_animation("Standing")
+
 
 # play a specific animation
 func play_animation(animation_name: String) -> void:

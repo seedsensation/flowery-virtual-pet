@@ -69,6 +69,15 @@ impl Flowery {
     }
 
     #[func]
+    pub fn get_position(&self) -> Vector2 {
+        self.base()
+            .get_window()
+            .unwrap()
+            .get_position()
+            .to_flt_vector()
+    }
+
+    #[func]
     /// Move Flowery, and handle collision
     pub fn move_and_slide(&mut self) {
         let mut window = self.base().get_window().unwrap();
