@@ -36,7 +36,6 @@ impl Flowery {
     #[func]
     /// Move Flowery, and handle collision
     pub fn move_and_slide(&mut self) {
-        godot_print!("{}", self.velocity);
         let mut window = self.base().get_window().unwrap();
         //let mut display_server = DisplayServer::singleton();
 
@@ -51,5 +50,14 @@ impl Flowery {
     pub fn move_to(&mut self, location: Vector2i) {
         let mut window = self.base().get_window().unwrap();
         window.set_position(location);
+    }
+
+    /// Returns true if Flowery is currently colliding with the active window
+    pub fn check_collision(&self, shape: Shape) -> bool {
+        // a.left < b.right &&
+        // a.right > b.left &&
+        // a.top > b.bottom &&
+        // a.bottom < b.top
+        false
     }
 }

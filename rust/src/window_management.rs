@@ -2,6 +2,7 @@
 use active_win_pos_rs::get_active_window;
 use godot::prelude::*;
 
+#[derive(Debug)]
 pub struct Shape {
     pos: Vector2,
     size: Vector2,
@@ -13,6 +14,19 @@ impl Shape {
             pos: Vector2 { x: 0f32, y: 0f32 },
             size: Vector2 { x: 0f32, y: 0f32 },
         }
+    }
+
+    pub fn top(&self) -> f32 {
+        self.pos.y
+    }
+    pub fn bottom(&self) -> f32 {
+        self.pos.y + self.size.y
+    }
+    pub fn left(&self) -> f32 {
+        self.pos.x
+    }
+    pub fn right(&self) -> f32 {
+        self.pos.x + self.size.x
     }
 }
 

@@ -21,7 +21,6 @@ var jarona2 = preload("res://voicelines/jarona2.wav")
 var jarona3 = preload("res://voicelines/jarona3.wav")
 var jarona4 = preload("res://voicelines/jarona4.wav")
 
-
 # set basic things
 var speed = 100
 var direction = Vector2(1,0)
@@ -35,7 +34,6 @@ var is_idling = false
 # easier to remember definitions of our specific nodes
 @onready var sprite = $Sprite
 @onready var area = $Sprite/Area
-@onready var voice = $Voice
 
 # run as soon as the game launches
 func _ready() -> void:
@@ -80,14 +78,19 @@ func _physics_process(_delta: float) -> void:
 	else:
 		self.move_and_slide()
 		get_window().position = get_window().position + Vector2i(1,0)
-	
+
 func play_line(line) -> void:
-	if voice.stream != line:
-		voice.stream = line
-	voice.play()
+	var voice_line: AudioStreamPlayer = AudioStreamPlayer.new()
+	add_child(voice_line)
+	voice_line.stream = line
+	voice_line.play()
+	await voice_line.finished
+	voice_line.queue_free()
+	
 
 func jarona_voice() -> void:
 	var jarona_line = [jarona1, jarona2, jarona3, jarona4].pick_random()
-	if voice.stream != jarona_line:
-		voice.stream = jarona_line
-	voice.play()
+	play_line(jarona_line)
+
+func is_playing(player: AudioStreamPlayer) -> bool:
+	return player.playing
