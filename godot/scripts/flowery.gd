@@ -1,4 +1,4 @@
-extends Node2D
+extends Flowery
 
 enum FloweryState {
 	FLYING, 
@@ -21,6 +21,7 @@ var jarona2 = preload("res://voicelines/jarona2.wav")
 var jarona3 = preload("res://voicelines/jarona3.wav")
 var jarona4 = preload("res://voicelines/jarona4.wav")
 
+
 # set basic things
 var speed = 100
 var direction = Vector2(1,0)
@@ -38,6 +39,7 @@ var is_idling = false
 
 # run as soon as the game launches
 func _ready() -> void:
+	play_animation("Standing")
 	screen_size = Vector2(DisplayServer.screen_get_size())
 	area.input_event.connect(_on_area_input)
 
@@ -55,7 +57,7 @@ func _on_area_input(_viewport, event, _shape_idx):
 func _unhandled_input(event):
 	if event is InputEventMouseButton:
 		if !event.pressed and event.button_index == MOUSE_BUTTON_LEFT and is_dragging:
-			play_animation("Standing")
+			play_animation("Walking Forward Right")
 			play_line(falling)
 			is_dragging = false
 
@@ -73,11 +75,11 @@ func _physics_process(_delta: float) -> void:
 	# if he's being dragged
 	if is_dragging:
 		# move him
-		var mouse_pos = Vector2(DisplayServer.mouse_get_position())
-		var new_win_pos = mouse_pos - drag_offset
-		DisplayServer.window_set_position(Vector2i(new_win_pos))
-
-	pass
+		self.move_to(Vector2(DisplayServer.mouse_get_position()) - drag_offset)
+		#self.velocity = Vector2(0,0)
+	else:
+		self.move_and_slide()
+		get_window().position = get_window().position + Vector2i(1,0)
 	
 func play_line(line) -> void:
 	if voice.stream != line:

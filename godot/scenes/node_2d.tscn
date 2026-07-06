@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dbjivejplralk"]
 
-[ext_resource type="Script" uid="uid://bmyxov6gyj8u8" path="res://scripts/node_2d.gd" id="1_epypp"]
+[ext_resource type="Script" uid="uid://bmyxov6gyj8u8" path="res://scripts/flowery.gd" id="1_epypp"]
 [ext_resource type="SpriteFrames" uid="uid://b04p35qttpw6h" path="res://sprites/flowery_sprites.tres" id="1_wtcfe"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0e48y"]
@@ -16,7 +16,7 @@ texture_repeat = 1
 position = Vector2(58, 140)
 scale = Vector2(4, 4)
 sprite_frames = ExtResource("1_wtcfe")
-animation = &"Fly To Idle"
+animation = &"Walking Forward"
 
 [node name="Area" type="Area2D" parent="Sprite" unique_id=632899676]
 position = Vector2(-60.999996, -58.999996)
