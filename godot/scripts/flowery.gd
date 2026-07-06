@@ -1,22 +1,12 @@
 extends Flowery
 
-enum FloweryState {
-	FLYING, 
-	WALKING, 
-	IDLE, 
-	AURAFARM,
-	FLYTOIDLE,
-	CONDESCEND
-	}
-enum Direction { LEFT, UP, RIGHT, DOWN }
-
-var current_state = FloweryState.IDLE
-
 # preload audio files we might need
 var falling = preload("res://voicelines/falling.wav")
 var flesh = preload("res://voicelines/flesh.wav")
 var sustingus = preload("res://voicelines/sustingus.wav")
 var frandisco = preload("res://voicelines/frandisco.wav")
+var forget_it = preload("res://voicelines/forget_it.wav")
+var mysterious_wind = preload("res://voicelines/mysterious_wind.wav")
 
 var jarona1 = preload("res://voicelines/jarona1.wav")
 var jarona2 = preload("res://voicelines/jarona2.wav")
@@ -24,15 +14,12 @@ var jarona3 = preload("res://voicelines/jarona3.wav")
 var jarona4 = preload("res://voicelines/jarona4.wav")
 
 # set basic things
-var speed = 100
-var direction = Vector2(1,0)
 var screen_size = Vector2()
 var window_size = Vector2(300,300)
 var is_dragging = false
 var drag_offset = Vector2()
-var idle_timer = 0.0
-var is_idling = false
 
+var time_of_next_action: int = range(10,20).pick_random()
 
 # easier to remember definitions of our specific nodes
 @onready var sprite = $Sprite
@@ -49,8 +36,12 @@ func _ready() -> void:
 # run whenever you interact with the collision box
 func _on_area_input(_viewport, event, _shape_idx):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		idle_timer = 0
 		if event.pressed:
+			update_status("Grabbed")
 			is_dragging = true
+			acceleration = Vector2()
+			velocity = Vector2()
 			jarona_voice()
 			play_animation("Grabbed")
 			var mouse_pos = Vector2(DisplayServer.mouse_get_position())
@@ -60,8 +51,9 @@ func _on_area_input(_viewport, event, _shape_idx):
 func _unhandled_input(event):
 	if event is InputEventMouseButton:
 		if !event.pressed and event.button_index == MOUSE_BUTTON_LEFT and is_dragging:
-			play_animation("Walking Forward Right")
-			play_line(falling)
+			update_status("Idle")
+			velocity = Vector2(0,0)
+			acceleration = Vector2(0,9.81)
 			is_dragging = false
 
 # play a specific animation
@@ -73,15 +65,23 @@ func play_animation(animation_name: String) -> void:
 	DisplayServer.window_set_size(Vector2i(texture.get_width() * sprite.scale.x, texture.get_height() * sprite.scale.y))
 	pass
 
+func readjust_size() -> void:
+	var texture = sprite.sprite_frames.get_frame_texture(sprite.animation,0)
+	# set window size to size of texture
+	DisplayServer.window_set_size(Vector2i(texture.get_width() * sprite.scale.x, texture.get_height() * sprite.scale.y))
+
+
 # run every tick
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
+	self.velocity += self.acceleration * delta
 	# if he's being dragged
 	if is_dragging:
 		# move him
 		self.move_to(Vector2(DisplayServer.mouse_get_position()) - drag_offset)
 		#self.velocity = Vector2(0,0)
 	else:
-		play_animation("Walking Forward Right")
+		if self.velocity.y > 0 and idle_timer > 1 and status != "Falling":
+			update_status("Falling")
 		self.move_and_slide()
 
 func play_line(line) -> void:
@@ -102,14 +102,45 @@ func is_playing(player: AudioStreamPlayer) -> bool:
 
 
 func _on_trapped() -> void:
-	print("I'M TRAPPED!")
+	update_status("Trapped")
+	acceleration = Vector2()
+	velocity = Vector2()
+
 	pass # Replace with function body.
 
 
 func _on_collision(direction: Vector2) -> void:
-	print("I just hit something",direction)
+	play_line(forget_it)
+	play_animation("Condescend")
+	velocity = Vector2(0,0)
+	acceleration = Vector2(0,0)
+	update_status("Idle")
 	pass # Replace with function body.
 
 
-func _on_falling_from_height() -> void:
+
+func _on_status_updated(status: String) -> void:
+	idle_timer = 0
+	match status:
+		"Idle":
+			pass
+		"Walking":
+			pass
+		"Flying":
+			play_line(mysterious_wind)
+			ignore_collision = true
+			velocity = Vector2(5, -3)
+			sprite.animation = "Mysterious Wind"
+			sprite.frame = 1
+			sprite.stop()
+			readjust_size()
+		"Sitting":
+			pass
+		"Falling":
+			play_animation("Fall")
+			ignore_collision = true
+			play_line(falling)
+			pass
+		"Grabbed":
+			ignore_collision = false
 	pass # Replace with function body.

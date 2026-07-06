@@ -4,15 +4,40 @@ use godot::prelude::*;
 
 use super::window_management::{get_window_shape, Shape};
 
-const DISTANCE_TO_FALL: i32 = 100;
+const SECONDS_TO_FALL: i32 = 100;
+
+#[derive(GodotConvert, Var, Export, Default, Clone, Copy, PartialEq, Debug)]
+#[godot(via = GString)]
+pub enum FloweryStatus {
+    #[default]
+    Idle,
+    Grabbed,
+    Walking,
+    Flying,
+    Sitting,
+    Falling,
+    Trapped,
+}
 
 #[derive(GodotClass)]
 #[class(base=Node2D)]
 struct Flowery {
     primary_window: Shape,
+
+    #[export]
+    status: FloweryStatus,
+    #[var]
+    idle_timer: f64,
+    #[var]
+    ignore_collision: bool,
     #[var]
     /// The speed at which my boy moves
     velocity: Vector2,
+    #[var]
+    out_of_bounds: bool,
+    #[var]
+    /// How much he accelerates by
+    acceleration: Vector2,
     base: Base<Node2D>,
 }
 
@@ -30,13 +55,21 @@ impl INode2D for Flowery {
 
         Self {
             primary_window: Shape::empty(),
-            velocity: Vector2::new(0.0, 0.0),
+            ignore_collision: false,
+            status: FloweryStatus::Walking,
+            idle_timer: 0.0,
+            velocity: Vector2::new(1.0, 0.0),
+            out_of_bounds: false,
+            acceleration: Vector2::ZERO,
             base,
         }
     }
 
-    fn physics_process(&mut self, _delta: f64) {}
-    fn process(&mut self, _delta: f64) {
+    fn physics_process(&mut self, delta: f64) {
+        self.velocity += self.acceleration * delta as f32;
+    }
+    fn process(&mut self, delta: f64) {
+        self.idle_timer += delta;
         get_window_shape().map(|shape| self.primary_window = shape);
     }
 }
@@ -72,12 +105,27 @@ impl Flowery {
         let window_position = window.get_position();
         //display_server.window_set_position(window_position + Vector2i::new(x as i32, y as i32));
 
-        let sides = self.collision_sides();
-        if sides == Vector2::ZERO && self.will_collide() {
-            self.signals().trapped().emit();
-        } else if self.will_collide() {
-            self.signals().collision().emit(sides);
-        } else if sides == Vector2::ZERO {
+        if !self.ignore_collision && self.velocity != Vector2::ZERO && !self.out_of_bounds {
+            let sides = self.collision_sides();
+            if self.will_collide() && sides != Vector2::ZERO
+                || sides == Vector2::ZERO
+                    && self.will_collide()
+                    && self.get_shape().pos.y - self.primary_window.pos.y < 100
+            {
+                if self.get_shape().pos.y - self.primary_window.pos.y < 100 {
+                    self.move_to(Vector2i::new(
+                        self.get_shape().pos.x,
+                        self.primary_window.pos.y - self.get_shape().size.y,
+                    ));
+                }
+                self.signals().collision().emit(sides);
+            } else if sides == Vector2::ZERO && self.will_collide() {
+                godot_print!("Trapped");
+                self.signals().trapped().emit();
+            } else if sides == Vector2::ZERO {
+                window.set_position(window_position + self.velocity.to_int_vector());
+            }
+        } else if self.ignore_collision && self.velocity != Vector2::ZERO && !self.out_of_bounds {
             window.set_position(window_position + self.velocity.to_int_vector());
         }
     }
@@ -97,7 +145,17 @@ impl Flowery {
 
     #[func]
     pub fn will_collide(&self) -> bool {
-        self.test_collision(self.velocity)
+        if self.ignore_collision {
+            false
+        } else {
+            self.test_collision(self.velocity)
+        }
+    }
+
+    #[func]
+    pub fn update_status(&mut self, status: FloweryStatus) {
+        self.status = status;
+        self.signals().status_updated().emit(status);
     }
 
     /// Returns true if the vector of movement would make Flowery collide with the active window
@@ -116,21 +174,20 @@ impl Flowery {
                 vector += new_vec;
             }
         }
-        if vector == Vector2::ZERO {
-            vector
-        } else {
-            vector.normalized()
-        }
+        vector.normalized_or_zero()
     }
 
     #[signal]
-    fn falling_from_height();
+    fn status_updated(status: FloweryStatus);
 
     #[signal]
     fn trapped();
 
     #[signal]
     fn collision(direction: Vector2);
+
+    #[signal]
+    fn out_of_bounds();
 }
 
 fn collision_check(a: &Shape, b: &Shape) -> bool {

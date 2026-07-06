@@ -30,6 +30,10 @@ region = Rect2(644, 804, 34, 64)
 atlas = ExtResource("1_qbebv")
 region = Rect2(680, 804, 34, 64)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_dx3uq"]
+atlas = ExtResource("1_qbebv")
+region = Rect2(1916, 118, 46, 60)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_wtcfe"]
 atlas = ExtResource("1_qbebv")
 region = Rect2(1697, 247, 33, 73)
@@ -153,6 +157,14 @@ region = Rect2(1844, 38, 30, 59)
 [sub_resource type="AtlasTexture" id="AtlasTexture_ma08v"]
 atlas = ExtResource("1_qbebv")
 region = Rect2(1876, 38, 30, 59)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6fokc"]
+atlas = ExtResource("1_qbebv")
+region = Rect2(351, 494, 39, 61)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7y51k"]
+atlas = ExtResource("1_qbebv")
+region = Rect2(393, 494, 39, 61)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0e48y"]
 atlas = ExtResource("1_qbebv")
@@ -316,6 +328,14 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_dx3uq")
+}],
+"loop": 1,
+"name": &"Fall",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_wtcfe")
 }, {
 "duration": 1.0,
@@ -435,6 +455,17 @@ animations = [{
 }],
 "loop": 1,
 "name": &"Jarona Windup",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6fokc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7y51k")
+}],
+"loop": 1,
+"name": &"Mysterious Wind",
 "speed": 5.0
 }, {
 "frames": [{
