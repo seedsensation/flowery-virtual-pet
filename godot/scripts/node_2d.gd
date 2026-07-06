@@ -16,6 +16,11 @@ var flesh = preload("res://voicelines/flesh.wav")
 var sustingus = preload("res://voicelines/sustingus.wav")
 var frandisco = preload("res://voicelines/frandisco.wav")
 
+var jarona1 = preload("res://voicelines/jarona1.wav")
+var jarona2 = preload("res://voicelines/jarona2.wav")
+var jarona3 = preload("res://voicelines/jarona3.wav")
+var jarona4 = preload("res://voicelines/jarona4.wav")
+
 # set basic things
 var speed = 100
 var direction = Vector2(1,0)
@@ -41,6 +46,7 @@ func _on_area_input(_viewport, event, _shape_idx):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
 			is_dragging = true
+			jarona_voice()
 			play_animation("Grabbed")
 			var mouse_pos = Vector2(DisplayServer.mouse_get_position())
 			var win_pos = Vector2(DisplayServer.window_get_position())
@@ -76,4 +82,10 @@ func _physics_process(_delta: float) -> void:
 func play_line(line) -> void:
 	if voice.stream != line:
 		voice.stream = line
+	voice.play()
+
+func jarona_voice() -> void:
+	var jarona_line = [jarona1, jarona2, jarona3, jarona4].pick_random()
+	if voice.stream != jarona_line:
+		voice.stream = jarona_line
 	voice.play()
