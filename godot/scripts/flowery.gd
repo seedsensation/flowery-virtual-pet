@@ -42,6 +42,7 @@ var kept_you_waiting = false
 var lady = true
 var king = true
 var drag_offset = Vector2()
+var fall_variant = 1
 
 var time_of_next_action: int = range(10,20).pick_random()
 @export
@@ -92,10 +93,16 @@ func _unhandled_input(event):
 			acceleration = gravity
 			status = Status.FALLING
 			if !touching_bottom_side():
-				play_animation("Fall")
+				play_fall_animation()
 			idle_timer = 0
 			is_dragging = false
 
+func play_fall_animation() -> void:
+	fall_variant = [1, 2].pick_random()
+	if fall_variant == 1:
+		play_animation("Fall")
+	else:
+		play_animation("Fall Spinning")
 
 
 # play a specific animation
@@ -110,9 +117,14 @@ func play_animation(animation_name: String) -> void:
 func check_animation_swap():
 	if status in IGNORE_FLIP_WHEN:
 		return
+	elif status == Status.FALLING and fall_variant == 2:
+		if velocity.x >= 0:
+			sprite.play()
+		elif velocity.x < 0:
+			sprite.play_backwards()
 	if sprite.animation.begins_with("L ") and velocity.x >= 0:
 		sprite.animation = sprite.animation.remove_chars("L ")
-	elif !sprite.animation.begins_with("L ") and velocity.x < 0:
+	elif !sprite.animation.begins_with("L ") and velocity.x < 0 and "L "+sprite.animation in sprite.sprite_frames.get_animation_names():
 		sprite.animation = "L "+sprite.animation
 		
 

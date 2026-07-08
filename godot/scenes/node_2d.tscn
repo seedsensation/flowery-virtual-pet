@@ -16,7 +16,8 @@ texture_repeat = 1
 position = Vector2(-1, -1)
 scale = Vector2(4, 4)
 sprite_frames = ExtResource("1_wtcfe")
-animation = &"Standing"
+animation = &"Fall Spinning"
+frame_progress = 0.06804685
 centered = false
 
 [node name="Area" type="Area2D" parent="Sprite" unique_id=632899676]

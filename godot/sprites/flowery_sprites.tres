@@ -35,6 +35,22 @@ region = Rect2(680, 804, 34, 64)
 atlas = ExtResource("1_qbebv")
 region = Rect2(1916, 118, 46, 60)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_1if1g"]
+atlas = ExtResource("1_qbebv")
+region = Rect2(570, 276, 47, 61)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4eokd"]
+atlas = ExtResource("1_qbebv")
+region = Rect2(619, 276, 47, 61)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2o5ja"]
+atlas = ExtResource("1_qbebv")
+region = Rect2(668, 276, 47, 61)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j3hue"]
+atlas = ExtResource("1_qbebv")
+region = Rect2(717, 276, 47, 61)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_wtcfe"]
 atlas = ExtResource("1_qbebv")
 region = Rect2(1697, 247, 33, 73)
@@ -306,6 +322,23 @@ animations = [{
 "loop": 1,
 "name": &"Fall",
 "speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1if1g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4eokd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2o5ja")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j3hue")
+}],
+"loop": 1,
+"name": &"Fall Spinning",
+"speed": 6.0
 }, {
 "frames": [{
 "duration": 1.0,
