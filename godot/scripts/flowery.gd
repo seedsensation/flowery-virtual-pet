@@ -49,7 +49,7 @@ var animation_offsets = {
 	"L Fall" = Vector2(0,1),
 	"Standing" = Vector2(0,2),
 	"L Standing" = Vector2(2,2),
-	"Condescend" = Vector2(3,1),
+	"Condescend" = Vector2(4,0),
 	"Grabbed" = Vector2(0,6),
 	"Walking" = Vector2(4,2)
 	
