@@ -96,16 +96,14 @@ impl Flowery {
 
     #[func]
     pub fn get_position(&self) -> Vector2 {
+        let offset = self.sprite.as_ref().unwrap().get_offset();
         self.base()
             .get_window()
             .unwrap()
             .get_position()
             .to_flt_vector()
-            - if self.sprite.as_ref().unwrap().get_offset().x < 0.0
-                || self.sprite.as_ref().unwrap().get_offset().y < 0.0
-            {
-                self.sprite.as_ref().unwrap().get_offset()
-                    * self.sprite.as_ref().unwrap().get_scale()
+            - if offset.x < 0.0 || offset.y < 0.0 {
+                offset * self.sprite.as_ref().unwrap().get_scale()
             } else {
                 Vector2::ZERO
             }
