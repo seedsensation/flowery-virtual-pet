@@ -204,6 +204,8 @@ func waiting_voice() -> void:
 		waiting_line_options.append(sorry_again)
 	kept_you_waiting = true
 	var waiting_line = waiting_line_options.pick_random()
+	if waiting_line in [sorry_again_king, sorry_again_lady, sorry_again]:
+		kept_you_waiting = false
 	play_line(waiting_line)
 
 func play_line(line) -> void:
@@ -268,6 +270,9 @@ func _on_action_timer_timeout() -> void:
 	if status == Status.FALLING and idle_timer > 0.3 and velocity.y >= 0 and !said_falling:
 			play_line(falling)
 			said_falling = true
+			
+	if range(100).pick_random() == 5:
+		play_line([flesh, sustingus, mysterious_wind].pick_random())
 	if idle_timer > 20:
 		decide_next_action()
 		
