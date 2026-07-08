@@ -4,7 +4,7 @@ enum Status { IDLE, FALLING, FLYING, OUT_OF_BOUNDS, MID_ANIMATION, GRABBED}
 
 const IGNORE_FLIP_WHEN = [Status.OUT_OF_BOUNDS, Status.GRABBED]
 
-const gravity = Vector2(0, 981)
+const gravity = Vector2(0, 1281)
 const walking_speed = 100
 
 # preload audio files we might need
@@ -74,7 +74,7 @@ func _on_area_input(_viewport, event, _shape_idx):
 func _unhandled_input(event):
 	if event is InputEventMouseButton:
 		if !event.pressed and event.button_index == MOUSE_BUTTON_LEFT and status == Status.GRABBED:
-			velocity = Vector2(DisplayServer.mouse_get_position() - last_mouse_pos) * Vector2(50, 45)
+			velocity = Vector2(DisplayServer.mouse_get_position() - last_mouse_pos) * Vector2(25, 25)
 			acceleration = gravity
 			status = Status.FALLING
 			if !touching_bottom_side():
