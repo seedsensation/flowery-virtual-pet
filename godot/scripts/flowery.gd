@@ -40,7 +40,8 @@ var animations = {
 	"Standing" = Vector2(0,6),
 	"L Standing" = Vector2(2,6),
 	"Condescend" = Vector2(3,1),
-	"Grabbed" = Vector2(0,6)
+	"Grabbed" = Vector2(0,6),
+	"Walking" = Vector2(4,6)
 	
 }
 
