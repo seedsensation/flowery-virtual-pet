@@ -204,9 +204,12 @@ func _on_screen_border_collision(up: bool, right: bool, down: bool, left: bool) 
 
 			play_animation("Standing")
 		
-	if right or left and status != Status.MID_ANIMATION:
+	if (right or left) and status != Status.MID_ANIMATION and !up:
 		velocity = velocity * Vector2(-1,1)
 		check_animation_swap()
+	elif right or left and status != Status.MID_ANIMATION and up:
+		return_from_offscreen()
+		
 
 
 func _on_action_timer_timeout() -> void:
