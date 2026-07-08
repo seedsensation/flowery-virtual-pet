@@ -8,18 +8,22 @@ const gravity = Vector2(0, 1281)
 const walking_speed = 100
 
 # preload audio files we might need
-var falling = preload("res://voicelines/falling.wav")
+# misc lines
 var flesh = preload("res://voicelines/flesh.wav")
 var sustingus = preload("res://voicelines/sustingus.wav")
 var frandisco = preload("res://voicelines/frandisco.wav")
+var mysterious_wind = preload("res://voicelines/mysterious_wind.wav")
+var mini_peppers = preload("res://voicelines/mini_peppers.wav")
+# mid-falling
+var falling = preload("res://voicelines/falling.wav")
+var great_style = preload("res://voicelines/great_style.wav")
+# landing
 var forget_it = preload("res://voicelines/forget_it.wav")
 var get_a_chance_1 = preload("res://voicelines/get_a_chance_1.wav")
 var get_a_chance_2 = preload("res://voicelines/get_a_chance_2.wav")
 var hoo = preload("res://voicelines/hoo.wav")
 var huh = preload("res://voicelines/huh.wav")
-var mysterious_wind = preload("res://voicelines/mysterious_wind.wav")
-var mini_peppers = preload("res://voicelines/mini_peppers.wav")
-
+# kept you waiting
 var sorry_to_keep_you_waiting = preload("res://voicelines/sorry_to_keep_you_waiting.wav")
 var sorry_to_keep_you_waiting_2 = preload("res://voicelines/sorry_to_keep_you_waiting_2.wav")
 var sorry_again = preload("res://voicelines/sorry_again.wav")
@@ -27,7 +31,11 @@ var sorry_king = preload("res://voicelines/sorry_king.wav")
 var sorry_again_king = preload("res://voicelines/sorry_again_king.wav")
 var sorry_lady = preload("res://voicelines/sorry_lady.wav")
 var sorry_again_lady = preload("res://voicelines/sorry_again_lady.wav")
-
+# my x
+var my_human = preload("res://voicelines/my_human.wav")
+var my_lady = preload("res://voicelines/my_lady.wav")
+var my_king = preload("res://voicelines/my_king.wav")
+# jarona
 var jarona1 = preload("res://voicelines/jarona1.wav")
 var jarona2 = preload("res://voicelines/jarona2.wav")
 var jarona3 = preload("res://voicelines/jarona3.wav")
@@ -84,7 +92,17 @@ func _on_area_input(_viewport, event, _shape_idx):
 			if velocity.length() > 1500:
 				play_line(mini_peppers)
 			else:
-				jarona_voice()
+				var grab_line = [1,2].pick_random()
+				match grab_line:
+					1:
+						jarona_voice()
+					2:
+						var myGuy = [my_human]
+						if king:
+							myGuy.append(my_king)
+						if lady:
+							myGuy.append(my_lady)
+						play_line(myGuy.pick_random())
 			acceleration = Vector2()
 			play_animation("Grabbed")
 			velocity = Vector2()
@@ -279,8 +297,11 @@ func _on_screen_border_collision(up: bool, right: bool, down: bool, left: bool) 
 
 func _on_action_timer_timeout() -> void:
 	if status == Status.FALLING and idle_timer > 0.3 and velocity.y >= 0 and !said_falling:
+		if fall_variant == 1:
 			play_line(falling)
-			said_falling = true
+		else:
+			play_line(great_style)
+		said_falling = true
 			
 	if range(100).pick_random() == 5:
 		play_line([flesh, sustingus, mysterious_wind].pick_random())
