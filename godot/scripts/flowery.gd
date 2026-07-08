@@ -198,6 +198,7 @@ func _on_screen_border_collision(up: bool, right: bool, down: bool, left: bool) 
 			acceleration = Vector2()
 			velocity = Vector2()
 			move_to_taskbar()
+			await get_tree().process_frame
 			play_animation("Condescend")
 
 
