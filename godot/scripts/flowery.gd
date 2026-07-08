@@ -34,7 +34,7 @@ var drag_offset = Vector2()
 
 var time_of_next_action: int = range(10,20).pick_random()
 @export
-var animations = {
+var animation_offsets = {
 	"Fall" = Vector2(-10,1),
 	"L Fall" = Vector2(0,1),
 	"Standing" = Vector2(0,6),
@@ -103,9 +103,9 @@ func check_animation_swap():
 		
 
 func set_offset() -> void:
-	if sprite.animation in animations.keys():
-		print("Adjusting offset to ", animations[sprite.animation], " for ", sprite.animation)
-		sprite.offset = animations[sprite.animation]
+	if sprite.animation in animation_offsets.keys():
+		print("Adjusting offset to ", animation_offsets[sprite.animation], " for ", sprite.animation)
+		sprite.offset = animation_offsets[sprite.animation]
 	else:
 		print("Resetting offset for ",sprite.animation)
 		sprite.offset = Vector2()
@@ -144,6 +144,7 @@ func return_from_offscreen() -> void:
 	await get_tree().create_timer(2).timeout
 	var size = get_shape().size
 	move_to(Vector2i(0 - size.x, DisplayServer.screen_get_usable_rect().end.y - size.y))
+	move_to_taskbar()
 	print(get_shape().position)
 	play_animation("Walking")
 	acceleration = Vector2()
@@ -167,6 +168,9 @@ func play_line(line) -> void:
 func jarona_voice() -> void:
 	var jarona_line = [jarona1, jarona2, jarona3, jarona4].pick_random()
 	play_line(jarona_line)
+
+func move_to_taskbar() -> void:
+	move_to(Vector2i(get_shape().position.x, DisplayServer.screen_get_usable_rect().end.y - get_shape().size.y))
 
 
 func _on_screen_border_collision(up: bool, right: bool, down: bool, left: bool) -> void:
@@ -211,7 +215,6 @@ func _on_screen_border_collision(up: bool, right: bool, down: bool, left: bool) 
 	elif right or left and status != Status.MID_ANIMATION and up:
 		return_from_offscreen()
 		
-
 
 func _on_action_timer_timeout() -> void:
 	if idle_timer > 20:
