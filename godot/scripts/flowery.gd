@@ -141,12 +141,21 @@ func return_from_offscreen() -> void:
 	velocity = Vector2()
 	acceleration = Vector2()
 	status = Status.MID_ANIMATION
-	await get_tree().create_timer(2).timeout
-	var size = get_shape().size
-	move_to(Vector2i(0 - size.x, DisplayServer.screen_get_usable_rect().end.y - size.y))
+
 	move_to_taskbar()
-	print(get_shape().position)
+	var size = get_shape().size
+	
+	await get_tree().process_frame
+
+	move_to(Vector2i(0 - size.x - 100, get_position().y))
+
+	await get_tree().process_frame
+	await get_tree().create_timer(2).timeout
+	
 	play_animation("Walking")
+
+	
+	print(get_shape().position)
 	acceleration = Vector2()
 	velocity = Vector2(100,0)
 	await get_tree().create_timer(2).timeout
@@ -170,6 +179,8 @@ func jarona_voice() -> void:
 	play_line(jarona_line)
 
 func move_to_taskbar() -> void:
+	play_animation("Standing")
+	await get_tree().process_frame
 	move_to(Vector2i(get_shape().position.x, DisplayServer.screen_get_usable_rect().end.y - get_shape().size.y))
 
 
@@ -187,12 +198,7 @@ func _on_screen_border_collision(up: bool, right: bool, down: bool, left: bool) 
 			acceleration = Vector2()
 			velocity = Vector2()
 			play_animation("Condescend")
-			# not entirely sure why but 
-			# we need to wait for the next tick
-			# in order for it to work
-			await get_tree().process_frame
-			
-			move_to(Vector2i(get_shape().position.x, DisplayServer.screen_get_usable_rect().end.y - get_shape().size.y))
+			move_to_taskbar()
 
 
 
