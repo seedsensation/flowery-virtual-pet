@@ -101,6 +101,14 @@ impl Flowery {
             .unwrap()
             .get_position()
             .to_flt_vector()
+            - if self.sprite.as_ref().unwrap().get_offset().x < 0.0
+                || self.sprite.as_ref().unwrap().get_offset().y < 0.0
+            {
+                self.sprite.as_ref().unwrap().get_offset()
+                    * self.sprite.as_ref().unwrap().get_scale()
+            } else {
+                Vector2::ZERO
+            }
     }
 
     #[func]
