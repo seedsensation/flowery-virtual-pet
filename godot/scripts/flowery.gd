@@ -13,6 +13,10 @@ var flesh = preload("res://voicelines/flesh.wav")
 var sustingus = preload("res://voicelines/sustingus.wav")
 var frandisco = preload("res://voicelines/frandisco.wav")
 var forget_it = preload("res://voicelines/forget_it.wav")
+var get_a_chance_1 = preload("res://voicelines/get_a_chance_1.wav")
+var get_a_chance_2 = preload("res://voicelines/get_a_chance_2.wav")
+var hoo = preload("res://voicelines/hoo.wav")
+var huh = preload("res://voicelines/huh.wav")
 var mysterious_wind = preload("res://voicelines/mysterious_wind.wav")
 var mini_peppers = preload("res://voicelines/mini_peppers.wav")
 
@@ -43,6 +47,7 @@ var lady = true
 var king = true
 var drag_offset = Vector2()
 var fall_variant = 1
+var land_variant = 1
 
 var time_of_next_action: int = range(10,20).pick_random()
 @export
@@ -53,7 +58,9 @@ var animation_offsets = {
 	"L Standing" = Vector2(2,2),
 	"Condescend" = Vector2(4,0),
 	"Grabbed" = Vector2(0,6),
-	"Walking" = Vector2(4,2)
+	"Walking" = Vector2(4,2),
+	"Crouch" = Vector2(0, 12),
+	"L Crouch" = Vector2(0, 12)
 	
 }
 
@@ -103,6 +110,8 @@ func play_fall_animation() -> void:
 		play_animation("Fall")
 	else:
 		play_animation("Fall Spinning")
+		if velocity.x < 0:
+			sprite.play_backwards()
 
 
 # play a specific animation
@@ -238,22 +247,24 @@ func _on_screen_border_collision(up: bool, right: bool, down: bool, left: bool) 
 			status = Status.MID_ANIMATION
 			facing_left = velocity.x < 0
 			acceleration = Vector2()
-			velocity = Vector2()
+			#velocity = Vector2()
 			move_to_taskbar()
 			await get_tree().process_frame
-			play_animation("Condescend")
-
-
-
-
-
-
-			velocity = Vector2()
-
-			
-			play_line(forget_it)
-			
-			await sprite.animation_finished
+			#land_variant = [1,2].pick_random()
+			match fall_variant:
+				1:
+					play_animation("Crouch")
+					velocity = Vector2()
+					var randomLine = [hoo, huh].pick_random()
+					play_line(randomLine)
+					await get_tree().create_timer(0.5).timeout
+					
+				2:
+					play_animation("Condescend")
+					velocity = Vector2()
+					var randomLine = [forget_it, get_a_chance_1, get_a_chance_2].pick_random()
+					play_line(randomLine)
+					await sprite.animation_finished
 			idle_timer = 0
 			status = Status.IDLE
 			said_falling = false
