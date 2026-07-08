@@ -15,7 +15,14 @@ var frandisco = preload("res://voicelines/frandisco.wav")
 var forget_it = preload("res://voicelines/forget_it.wav")
 var mysterious_wind = preload("res://voicelines/mysterious_wind.wav")
 var mini_peppers = preload("res://voicelines/mini_peppers.wav")
+
 var sorry_to_keep_you_waiting = preload("res://voicelines/sorry_to_keep_you_waiting.wav")
+var sorry_to_keep_you_waiting_2 = preload("res://voicelines/sorry_to_keep_you_waiting_2.wav")
+var sorry_again = preload("res://voicelines/sorry_again.wav")
+var sorry_king = preload("res://voicelines/sorry_king.wav")
+var sorry_again_king = preload("res://voicelines/sorry_again_king.wav")
+var sorry_lady = preload("res://voicelines/sorry_lady.wav")
+var sorry_again_lady = preload("res://voicelines/sorry_again_lady.wav")
 
 var jarona1 = preload("res://voicelines/jarona1.wav")
 var jarona2 = preload("res://voicelines/jarona2.wav")
@@ -30,6 +37,9 @@ var last_mouse_pos = Vector2()
 var facing_left = false
 var is_dragging = false
 var frozen: bool = false
+var kept_you_waiting = false
+var lady = true
+var king = true
 var drag_offset = Vector2()
 
 var time_of_next_action: int = range(10,20).pick_random()
@@ -159,12 +169,29 @@ func return_from_offscreen() -> void:
 	acceleration = Vector2()
 	velocity = Vector2(100,0)
 	await get_tree().create_timer(2).timeout
-	play_line(sorry_to_keep_you_waiting)
+	waiting_voice()
 	await get_tree().create_timer(2).timeout
 	velocity = Vector2()
 	status = Status.IDLE
 	play_animation("Standing")
 	idle_timer = 0
+	
+#Handles logic for which 'waiting' voice clips to play
+func waiting_voice() -> void:
+	var waiting_line_options = [sorry_to_keep_you_waiting, sorry_to_keep_you_waiting_2]
+	if king:
+		waiting_line_options.append(sorry_king)
+		if kept_you_waiting:
+			waiting_line_options.append(sorry_again_king)
+	if lady:
+		waiting_line_options.append(sorry_lady)
+		if kept_you_waiting:
+			waiting_line_options.append(sorry_again_lady)
+	if kept_you_waiting:
+		waiting_line_options.append(sorry_again)
+	kept_you_waiting = true
+	var waiting_line = waiting_line_options.pick_random()
+	play_line(waiting_line)
 
 func play_line(line) -> void:
 	var voice_line: AudioStreamPlayer = AudioStreamPlayer.new()
