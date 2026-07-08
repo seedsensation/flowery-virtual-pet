@@ -37,11 +37,11 @@ var time_of_next_action: int = range(10,20).pick_random()
 var animation_offsets = {
 	"Fall" = Vector2(-10,1),
 	"L Fall" = Vector2(0,1),
-	"Standing" = Vector2(0,6),
-	"L Standing" = Vector2(2,6),
+	"Standing" = Vector2(0,2),
+	"L Standing" = Vector2(2,2),
 	"Condescend" = Vector2(3,1),
 	"Grabbed" = Vector2(0,6),
-	"Walking" = Vector2(4,6)
+	"Walking" = Vector2(4,2)
 	
 }
 
@@ -197,8 +197,9 @@ func _on_screen_border_collision(up: bool, right: bool, down: bool, left: bool) 
 			facing_left = velocity.x < 0
 			acceleration = Vector2()
 			velocity = Vector2()
-			play_animation("Condescend")
 			move_to_taskbar()
+			play_animation("Condescend")
+
 
 
 
