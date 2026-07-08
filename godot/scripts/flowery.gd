@@ -37,6 +37,7 @@ var last_mouse_pos = Vector2()
 var facing_left = false
 var is_dragging = false
 var frozen: bool = false
+var said_falling = false
 var kept_you_waiting = false
 var lady = true
 var king = true
@@ -71,6 +72,7 @@ func _on_area_input(_viewport, event, _shape_idx):
 		if event.pressed:
 			status = Status.GRABBED
 			is_dragging = true
+			said_falling = false
 			if velocity.length() > 1500:
 				play_line(mini_peppers)
 			else:
@@ -82,6 +84,7 @@ func _on_area_input(_viewport, event, _shape_idx):
 			var win_pos = Vector2(DisplayServer.window_get_position())
 			drag_offset = mouse_pos - win_pos
 
+# drop him when you let go
 func _unhandled_input(event):
 	if event is InputEventMouseButton:
 		if !event.pressed and event.button_index == MOUSE_BUTTON_LEFT and status == Status.GRABBED:
@@ -92,6 +95,7 @@ func _unhandled_input(event):
 				play_animation("Fall")
 			idle_timer = 0
 			is_dragging = false
+
 
 
 # play a specific animation
@@ -137,10 +141,6 @@ func _physics_process(delta: float) -> void:
 
 			return_from_offscreen()
 			
-
-		elif status == Status.FALLING and idle_timer > 2 and velocity.y >= 0:
-			idle_timer = 0
-			play_line(falling)
 		if !frozen:
 			self.move_and_slide(delta)
 
@@ -173,6 +173,7 @@ func return_from_offscreen() -> void:
 	await get_tree().create_timer(2).timeout
 	velocity = Vector2()
 	status = Status.IDLE
+	said_falling = false
 	play_animation("Standing")
 	idle_timer = 0
 	
@@ -241,7 +242,7 @@ func _on_screen_border_collision(up: bool, right: bool, down: bool, left: bool) 
 			await sprite.animation_finished
 			idle_timer = 0
 			status = Status.IDLE
-
+			said_falling = false
 			play_animation("Standing")
 		
 	if (right or left) and status != Status.MID_ANIMATION and !up:
@@ -252,6 +253,9 @@ func _on_screen_border_collision(up: bool, right: bool, down: bool, left: bool) 
 		
 
 func _on_action_timer_timeout() -> void:
+	if status == Status.FALLING and idle_timer > 0.3 and velocity.y >= 0 and !said_falling:
+			play_line(falling)
+			said_falling = true
 	if idle_timer > 20:
 		decide_next_action()
 		
