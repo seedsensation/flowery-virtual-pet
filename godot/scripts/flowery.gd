@@ -31,6 +31,7 @@ var sorry_king = preload("res://voicelines/sorry_king.wav")
 var sorry_again_king = preload("res://voicelines/sorry_again_king.wav")
 var sorry_lady = preload("res://voicelines/sorry_lady.wav")
 var sorry_again_lady = preload("res://voicelines/sorry_again_lady.wav")
+var sorry_guys = preload("res://voicelines/sorry_guys.wav")
 # my x
 var my_human = preload("res://voicelines/my_human.wav")
 var my_lady = preload("res://voicelines/my_lady.wav")
@@ -51,6 +52,7 @@ var is_dragging = false
 var frozen: bool = false
 var said_falling = false
 var kept_you_waiting = false
+var clipped = false
 
 @export
 var lady = true
@@ -60,6 +62,7 @@ var king = true
 var drag_offset = Vector2()
 var fall_variant = 1
 var land_variant = 1
+var oob_check = 0
 
 var time_of_next_action: int = range(10,20).pick_random()
 @export
@@ -80,6 +83,7 @@ var animation_offsets = {
 func _ready() -> void:
 	area = $Sprite/Area
 	sprite = $Sprite
+	#sprite.scale = Vector2(3, 3)
 	velocity = Vector2i(0,0)
 	acceleration = gravity
 	play_animation("Standing")
@@ -224,6 +228,7 @@ func decide_next_action() -> void:
 	pass
 
 func return_from_offscreen() -> void:
+	oob_check = -5
 	velocity = Vector2()
 	acceleration = Vector2()
 	status = Status.MID_ANIMATION
@@ -245,7 +250,11 @@ func return_from_offscreen() -> void:
 	acceleration = Vector2()
 	velocity = Vector2(100,0)
 	await get_tree().create_timer(2).timeout
-	waiting_voice()
+	if clipped:
+		play_line(sorry_guys)
+		clipped = false
+	else:
+		waiting_voice()
 	await get_tree().create_timer(2).timeout
 	velocity = Vector2()
 	status = Status.IDLE
@@ -270,7 +279,7 @@ func waiting_voice() -> void:
 	var waiting_line = waiting_line_options.pick_random()
 	if waiting_line in [sorry_again_king, sorry_again_lady, sorry_again]:
 		kept_you_waiting = false
-	play_line(waiting_line, true)
+	play_line(waiting_line)
 
 func play_line(line, override_playing: bool = false) -> void:
 	var voice_line: AudioStreamPlayer = AudioStreamPlayer.new()
@@ -330,7 +339,7 @@ func _on_screen_border_collision(up: bool, right: bool, down: bool, left: bool) 
 			
 			var current_position = get_position()
 			print(current_position)
-			current_position.x -= velocity.x * get_process_delta_time() * 500
+			current_position.x -= velocity.x / 9.5
 			await get_tree().process_frame
 			move_to(current_position)
 			print(get_position())
@@ -348,7 +357,14 @@ func _on_action_timer_timeout() -> void:
 		else:
 			play_line(great_style)
 		said_falling = true
-			
+	# check if he's out of bounds
+	if (touching_bottom_side() and get_position().y > DisplayServer.screen_get_size().y) or touching_left_side() or touching_right_side() or touching_top_side():
+		oob_check += 1
+		if oob_check > 2:
+			clipped = true
+			return_from_offscreen()
+	else:
+		oob_check = 0
 	if range(200).pick_random() == 5:
 		play_line([flesh, sustingus, mysterious_wind].pick_random())
 	if idle_timer > 20:
