@@ -6,7 +6,7 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0e48y"]
 size = Vector2(24.750015, 62.850044)
 
-[node name="Flowery" type="Flowery" unique_id=2058313265]
+[node name="Flowery" type="MovableWindow" unique_id=309334070]
 script = ExtResource("1_epypp")
 king = false
 

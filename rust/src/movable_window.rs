@@ -5,7 +5,7 @@ use godot::prelude::*;
 
 #[derive(GodotClass)]
 #[class(base=Node2D)]
-struct Flowery {
+struct MovableWindow {
     #[var]
     ignore_collision: bool,
 
@@ -25,7 +25,7 @@ struct Flowery {
 }
 
 #[godot_api]
-impl INode2D for Flowery {
+impl INode2D for MovableWindow {
     fn init(base: Base<Node2D>) -> Self {
         Self {
             sprite: None,
@@ -45,7 +45,7 @@ impl INode2D for Flowery {
 }
 
 #[godot_api]
-impl Flowery {
+impl MovableWindow {
     #[func]
     /// Get Flowery's current sprite's shape
     pub fn get_shape(&self) -> Rect2 {
