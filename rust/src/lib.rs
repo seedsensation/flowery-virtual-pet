@@ -1,8 +1,7 @@
 use godot::prelude::*;
 
-mod flowery;
+mod movable_window;
 mod vector_cast;
-mod window_management;
 
 struct MyExtension;
 

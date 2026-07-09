@@ -4,7 +4,7 @@ compatibility_minimum = 4.1
 reloadable = true
 
 [icons]
-Flowery = "res://sprites/flowery.svg"
+MovableWindow = "res://sprites/flowery.svg"
 
 [libraries]
 linux.debug.x86_64 =     "res://../rust/target/debug/libflowery_extensions.so"

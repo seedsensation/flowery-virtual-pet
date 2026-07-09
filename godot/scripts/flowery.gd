@@ -1,4 +1,4 @@
-extends Flowery
+extends MovableWindow
 
 enum Status { IDLE, FALLING, WALKING, FLYING, OUT_OF_BOUNDS, MID_ANIMATION, GRABBED}
 
@@ -329,8 +329,12 @@ func _on_screen_border_collision(up: bool, right: bool, down: bool, left: bool) 
 		if status == Status.WALKING:
 			
 			var current_position = get_position()
+			
 			print(current_position)
-			current_position.x -= velocity.x * get_process_delta_time() * 500
+			if get_shape().end.x < 0:
+				current_position.x = 0
+			else: 
+				current_position.x -= velocity.x * get_process_delta_time() * 500
 			await get_tree().process_frame
 			move_to(current_position)
 			print(get_position())
