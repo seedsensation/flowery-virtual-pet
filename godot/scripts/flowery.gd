@@ -51,8 +51,12 @@ var is_dragging = false
 var frozen: bool = false
 var said_falling = false
 var kept_you_waiting = false
+
+@export
 var lady = true
+@export
 var king = true
+
 var drag_offset = Vector2()
 var fall_variant = 1
 var land_variant = 1
@@ -90,19 +94,19 @@ func _on_area_input(_viewport, event, _shape_idx):
 			is_dragging = true
 			said_falling = false
 			if velocity.length() > 1500:
-				play_line(mini_peppers)
+				play_line(mini_peppers, true)
 			else:
 				var grab_line = [1,2].pick_random()
 				match grab_line:
 					1:
-						jarona_voice()
+						play_line(jarona_voice(), true)
 					2:
 						var myGuy = [my_human]
 						if king:
 							myGuy.append(my_king)
 						if lady:
 							myGuy.append(my_lady)
-						play_line(myGuy.pick_random())
+						play_line(myGuy.pick_random(), true)
 			acceleration = Vector2()
 			play_animation("Grabbed")
 			velocity = Vector2()
@@ -233,19 +237,19 @@ func waiting_voice() -> void:
 	var waiting_line = waiting_line_options.pick_random()
 	if waiting_line in [sorry_again_king, sorry_again_lady, sorry_again]:
 		kept_you_waiting = false
-	play_line(waiting_line)
+	play_line(waiting_line, true)
 
-func play_line(line) -> void:
+func play_line(line, override_playing: bool = false) -> void:
 	var voice_line: AudioStreamPlayer = AudioStreamPlayer.new()
-	add_child(voice_line)
-	voice_line.stream = line
-	voice_line.play()
-	await voice_line.finished
-	voice_line.queue_free()
+	if !(get_children().filter(func(x: Node): return x is AudioStreamPlayer and x.playing).size() > 0) or override_playing:
+		add_child(voice_line)
+		voice_line.stream = line
+		voice_line.play()
+		await voice_line.finished
+		voice_line.queue_free()
 
-func jarona_voice() -> void:
-	var jarona_line = [jarona1, jarona2, jarona3, jarona4].pick_random()
-	play_line(jarona_line)
+func jarona_voice() -> Resource:
+	return [jarona1, jarona2, jarona3, jarona4].pick_random()
 
 func move_to_taskbar() -> void:
 	play_animation("Standing")
@@ -303,7 +307,7 @@ func _on_action_timer_timeout() -> void:
 			play_line(great_style)
 		said_falling = true
 			
-	if range(100).pick_random() == 5:
+	if range(200).pick_random() == 5:
 		play_line([flesh, sustingus, mysterious_wind].pick_random())
 	if idle_timer > 20:
 		decide_next_action()
