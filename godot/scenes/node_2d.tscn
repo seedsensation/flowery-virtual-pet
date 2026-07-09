@@ -8,6 +8,7 @@ size = Vector2(24.750015, 62.850044)
 
 [node name="Flowery" type="Flowery" unique_id=2058313265]
 script = ExtResource("1_epypp")
+king = false
 
 [node name="Sprite" type="AnimatedSprite2D" parent="." unique_id=2084256793]
 clip_children = 2

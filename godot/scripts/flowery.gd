@@ -1,6 +1,6 @@
 extends Flowery
 
-enum Status { IDLE, FALLING, FLYING, OUT_OF_BOUNDS, MID_ANIMATION, GRABBED}
+enum Status { IDLE, FALLING, WALKING, FLYING, OUT_OF_BOUNDS, MID_ANIMATION, GRABBED}
 
 const IGNORE_FLIP_WHEN = [Status.OUT_OF_BOUNDS, Status.GRABBED]
 
@@ -113,6 +113,10 @@ func _on_area_input(_viewport, event, _shape_idx):
 			var mouse_pos = Vector2(DisplayServer.mouse_get_position())
 			var win_pos = Vector2(DisplayServer.window_get_position())
 			drag_offset = mouse_pos - win_pos
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+		print(status)
+		decide_next_action()
+
 
 # drop him when you let go
 func _unhandled_input(event):
@@ -188,6 +192,35 @@ func _physics_process(delta: float) -> void:
 			self.move_and_slide(delta)
 
 func decide_next_action() -> void:
+	idle_timer = 0
+	var actions = ["Stand","Walk","Fly","Jump"]
+	match status:
+		Status.IDLE:
+			actions.erase("Stand")
+		Status.WALKING:
+			actions.erase("Walk")
+		Status.FLYING:
+			actions.erase("Fly")
+	
+	match actions.pick_random():
+		"Walk":
+			facing_left = false
+			velocity = [Vector2(-100,0), Vector2(100,0)].pick_random()
+			acceleration = Vector2()
+			await get_tree().process_frame
+			play_animation("Walking")
+			status = Status.WALKING
+		"Stand":
+			facing_left = velocity.x < 0
+			velocity = Vector2()
+			acceleration = Vector2()
+			play_animation("Standing")
+			status = Status.IDLE
+		_:
+			decide_next_action()
+			
+	
+	
 	pass
 
 func return_from_offscreen() -> void:
@@ -293,9 +326,18 @@ func _on_screen_border_collision(up: bool, right: bool, down: bool, left: bool) 
 			play_animation("Standing")
 		
 	if (right or left) and status != Status.MID_ANIMATION and !up:
-		velocity = velocity * Vector2(-1,1)
-		check_animation_swap()
-	elif right or left and status != Status.MID_ANIMATION and up:
+		if status == Status.WALKING:
+			
+			var current_position = get_position()
+			print(current_position)
+			current_position.x -= velocity.x * get_process_delta_time() * 500
+			await get_tree().process_frame
+			move_to(current_position)
+			print(get_position())
+		else:
+			velocity = velocity * Vector2(-1,1)
+			check_animation_swap()
+	elif right or left and status != Status.MID_ANIMATION and up and get_shape().end.y < 0:
 		return_from_offscreen()
 		
 
