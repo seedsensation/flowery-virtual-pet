@@ -200,7 +200,7 @@ func return_from_offscreen() -> void:
 	
 	await get_tree().process_frame
 
-	move_to(Vector2i(0 - size.x - 100, get_position().y))
+	move_to(Vector2i(0 - size.x - 100, int(get_position().y)))
 
 	await get_tree().process_frame
 	await get_tree().create_timer(2).timeout
@@ -254,7 +254,7 @@ func jarona_voice() -> Resource:
 func move_to_taskbar() -> void:
 	play_animation("Standing")
 	await get_tree().process_frame
-	move_to(Vector2i(get_shape().position.x, DisplayServer.screen_get_usable_rect().end.y - get_shape().size.y))
+	move_to(Vector2i(int(get_shape().position.x), DisplayServer.screen_get_usable_rect().end.y - int(get_shape().size.y)))
 
 
 func _on_screen_border_collision(up: bool, right: bool, down: bool, left: bool) -> void:
