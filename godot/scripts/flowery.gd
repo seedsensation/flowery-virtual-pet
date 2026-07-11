@@ -1,4 +1,4 @@
-extends Flowery
+extends MovableWindow
 
 enum Status { IDLE, FALLING, WALKING, FLYING, OUT_OF_BOUNDS, MID_ANIMATION, GRABBED}
 enum Size { TINY, SMALL, MEDIUM, BIG, HUGE}
@@ -227,7 +227,6 @@ func _physics_process(delta: float) -> void:
 	# if he's being dragged
 	if status == Status.GRABBED:
 		# move him
-		print(DisplayServer.mouse_get_position().x - last_mouse_pos.x)
 		if rotate_timer > 0.1:
 			if (DisplayServer.mouse_get_position().x - last_mouse_pos.x) > 6:
 				sprite.rotation_degrees = 20
