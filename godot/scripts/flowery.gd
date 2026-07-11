@@ -1,6 +1,7 @@
 extends Flowery
 
 enum Status { IDLE, FALLING, WALKING, FLYING, OUT_OF_BOUNDS, MID_ANIMATION, GRABBED}
+enum Size { TINY, SMALL, MEDIUM, BIG, HUGE}
 
 const IGNORE_FLIP_WHEN = [Status.OUT_OF_BOUNDS, Status.GRABBED]
 
@@ -14,6 +15,18 @@ var sustingus = preload("res://voicelines/sustingus.wav")
 var frandisco = preload("res://voicelines/frandisco.wav")
 var mysterious_wind = preload("res://voicelines/mysterious_wind.wav")
 var mini_peppers = preload("res://voicelines/mini_peppers.wav")
+var flowers_blooms = preload("res://voicelines/flowers_blooms.wav")
+var all_according_to_plant = preload("res://voicelines/all_according_to_plant.wav")
+var I_found_a_glue = preload("res://voicelines/I_found_a_glue.wav")
+var your_dads_my_best_friend = preload("res://voicelines/your_dad's_my_best_friend.wav")
+var glue = preload("res://voicelines/glue.wav")
+var grown_like_a_turnip = preload("res://voicelines/grown_like_a_turnip.wav")
+var leaf_it_to_me = preload("res://voicelines/leaf_it_to_me.wav")
+var smile_again = preload("res://voicelines/smile_again.wav")
+var suckle_it_up = preload("res://voicelines/suckle_it_up.wav")
+var thats_great = preload("res://voicelines/that's_great.wav")
+var thats_my_dreams = preload("res://voicelines/that's_my_dreams.wav")
+var this_guys_your_best_friend = preload("res://voicelines/this_guy's_your_best_friend.wav")
 # mid-falling
 var falling = preload("res://voicelines/falling.wav")
 var great_style = preload("res://voicelines/great_style.wav")
@@ -44,6 +57,7 @@ var jarona4 = preload("res://voicelines/jarona4.wav")
 
 var status: Status = Status.FALLING
 var idle_timer: float = 0
+var rotate_timer: float = 0
 var last_mouse_pos = Vector2()
 
 # set basic things
@@ -58,6 +72,8 @@ var clipped = false
 var lady = true
 @export
 var king = true
+@export
+var size: Size = Size.MEDIUM
 
 var drag_offset = Vector2()
 var fall_variant = 1
@@ -74,8 +90,11 @@ var animation_offsets = {
 	"Condescend" = Vector2(4,0),
 	"Grabbed" = Vector2(0,6),
 	"Walking" = Vector2(4,2),
-	"Crouch" = Vector2(0, 12),
-	"L Crouch" = Vector2(0, 12)
+	"L Walking" = Vector2(0,2),
+	"Crouch" = Vector2(0, 13),
+	"L Crouch" = Vector2(0, 13),
+	"Fly Startup" = Vector2(0, 0),
+	"Fly Transition" = Vector2(-400, 0),
 	
 }
 
@@ -83,7 +102,17 @@ var animation_offsets = {
 func _ready() -> void:
 	area = $Sprite/Area
 	sprite = $Sprite
-	#sprite.scale = Vector2(3, 3)
+	match size:
+				Size.TINY:
+					sprite.scale = Vector2(1, 1)
+				Size.SMALL:
+					sprite.scale = Vector2(2, 2)
+				Size.MEDIUM:
+					sprite.scale = Vector2(3, 3)
+				Size.BIG:
+					sprite.scale = Vector2(4, 4)
+				Size.HUGE:
+					sprite.scale = Vector2(5, 5)
 	velocity = Vector2i(0,0)
 	acceleration = gravity
 	play_animation("Standing")
@@ -116,10 +145,22 @@ func _on_area_input(_viewport, event, _shape_idx):
 			velocity = Vector2()
 			var mouse_pos = Vector2(DisplayServer.mouse_get_position())
 			var win_pos = Vector2(DisplayServer.window_get_position())
-			drag_offset = mouse_pos - win_pos
+			#drag_offset = mouse_pos - win_pos
+			match size:
+				Size.TINY:
+					drag_offset = Vector2(11, 7)
+				Size.SMALL:
+					drag_offset = Vector2(25, 23)
+				Size.MEDIUM:
+					drag_offset = Vector2(37, 35)
+				Size.BIG:
+					drag_offset = Vector2(51, 51)
+				Size.HUGE:
+					drag_offset = Vector2(65, 65)
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 		print(status)
-		decide_next_action()
+		#decide_next_action()
+		enter_flying()
 
 
 # drop him when you let go
@@ -129,6 +170,7 @@ func _unhandled_input(event):
 			velocity = Vector2(DisplayServer.mouse_get_position() - last_mouse_pos) * Vector2(25, 25)
 			acceleration = gravity
 			status = Status.FALLING
+			sprite.rotation_degrees = 0
 			if !touching_bottom_side():
 				play_fall_animation()
 			idle_timer = 0
@@ -181,13 +223,27 @@ func set_offset() -> void:
 func _physics_process(delta: float) -> void:
 	self.velocity += self.acceleration * delta
 	idle_timer += delta
+	rotate_timer += delta
 	# if he's being dragged
 	if status == Status.GRABBED:
 		# move him
+		print(DisplayServer.mouse_get_position().x - last_mouse_pos.x)
+		if rotate_timer > 0.1:
+			if (DisplayServer.mouse_get_position().x - last_mouse_pos.x) > 6:
+				sprite.rotation_degrees = 20
+				rotate_timer = 0
+			elif (DisplayServer.mouse_get_position().x - last_mouse_pos.x) < -6:
+				sprite.rotation_degrees = -20
+				rotate_timer = 0
+			else:
+				sprite.rotation_degrees = 0
+				rotate_timer = 0
 		self.move_to(Vector2(DisplayServer.mouse_get_position()) - drag_offset)
 		last_mouse_pos = DisplayServer.mouse_get_position()
+		await get_tree().process_frame
 
 	else:
+		sprite.rotation_degrees = 0
 		if touching_top_side() and idle_timer > 4 and status == Status.FALLING:
 
 			return_from_offscreen()
@@ -220,12 +276,26 @@ func decide_next_action() -> void:
 			acceleration = Vector2()
 			play_animation("Standing")
 			status = Status.IDLE
+		#"Fly":
+		#	enter_flying()
 		_:
 			decide_next_action()
 			
 	
 	
 	pass
+
+func enter_flying() -> void:
+	facing_left = false
+	velocity = Vector2()
+	acceleration = Vector2()
+	status = Status.MID_ANIMATION
+	play_animation("Fly Startup")
+	await sprite.animation_finished
+	play_animation("Fly Transition")
+	await sprite.animation_finished
+	play_animation("Fly Neutral")
+	status = Status.FLYING
 
 func return_from_offscreen() -> void:
 	oob_check = -5
@@ -261,6 +331,7 @@ func return_from_offscreen() -> void:
 	said_falling = false
 	play_animation("Standing")
 	idle_timer = 0
+
 	
 #Handles logic for which 'waiting' voice clips to play
 func waiting_voice() -> void:
@@ -358,16 +429,17 @@ func _on_action_timer_timeout() -> void:
 			play_line(great_style)
 		said_falling = true
 	# check if he's out of bounds
-	if (touching_bottom_side() and get_position().y > DisplayServer.screen_get_size().y) or touching_left_side() or touching_right_side() or touching_top_side():
-		oob_check += 1
-		if oob_check > 2:
-			clipped = true
-			return_from_offscreen()
-	else:
-		oob_check = 0
+	if status != Status.GRABBED:
+		if get_position().y > DisplayServer.screen_get_size().y or get_position().x > DisplayServer.screen_get_size().x or get_position().x < 0 or (get_position().y < 0 and status != Status.FALLING):
+			oob_check += 1
+			if oob_check > 2:
+				clipped = true
+				return_from_offscreen()
+		else:
+			oob_check = 0
+			if idle_timer > 20 and status != Status.FALLING:
+				decide_next_action()
 	if range(200).pick_random() == 5:
-		play_line([flesh, sustingus, mysterious_wind].pick_random())
-	if idle_timer > 20:
-		decide_next_action()
-		
+		play_line([flesh, sustingus, mysterious_wind, flowers_blooms, all_according_to_plant, I_found_a_glue, your_dads_my_best_friend, glue, grown_like_a_turnip, leaf_it_to_me, suckle_it_up, thats_great, thats_my_dreams, this_guys_your_best_friend, jarona_voice()].pick_random())
+
 	pass # Replace with function body.
