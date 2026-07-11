@@ -67,6 +67,31 @@ impl MovableWindow {
     }
 
     #[func]
+    pub fn readjust_with_additional_sprite(&mut self, other_sprite: Gd<AnimatedSprite2D>) {
+        let offset = self.sprite.as_ref().unwrap().get_offset();
+        let scale = self.sprite.as_ref().unwrap().get_scale();
+        let sprite = self.sprite.as_mut().unwrap();
+        let texture = sprite
+            .get_sprite_frames()
+            .unwrap()
+            .get_frame_texture(&sprite.get_animation().to_string(), 0)
+            .unwrap();
+        let texture_2 = other_sprite
+            .get_sprite_frames()
+            .unwrap()
+            .get_frame_texture(&sprite.get_animation().to_string(), 0)
+            .unwrap();
+
+        DisplayServer::singleton().window_set_size(Vector2i::max(
+            Vector2i::new(
+                texture.get_width() * scale.cast_int().x,
+                texture.get_height() * scale.cast_int().y,
+            ) + (Vector2i::abs((offset * scale).cast_int())),
+            (texture_2.get_size() * other_sprite.get_scale()).cast_int(),
+        ));
+    }
+
+    #[func]
     pub fn readjust_window_size(&mut self) {
         let offset = self.sprite.as_ref().unwrap().get_offset();
         let scale = self.sprite.as_ref().unwrap().get_scale();

@@ -61,6 +61,9 @@ var drag_offset = Vector2()
 var fall_variant = 1
 var land_variant = 1
 
+var skateboard_window: Window
+var skateboard: MovableWindow
+
 var time_of_next_action: int = range(10,20).pick_random()
 @export
 var animation_offsets = {
@@ -80,7 +83,8 @@ var animation_offsets = {
 func _ready() -> void:
 	area = $Sprite/Area
 	sprite = $Sprite
-	velocity = Vector2i(0,0)
+	$SkateboardWindow.content_scale_factor = sprite.scale.x
+	$SkateboardWindow.activate(Vector2())
 	acceleration = gravity
 	play_animation("Standing")
 	area.input_event.connect(_on_area_input)
@@ -324,7 +328,6 @@ func _on_screen_border_collision(up: bool, right: bool, down: bool, left: bool) 
 			status = Status.IDLE
 			said_falling = false
 			play_animation("Standing")
-		
 	if (right or left) and status != Status.MID_ANIMATION and !up:
 		if status == Status.WALKING:
 			
