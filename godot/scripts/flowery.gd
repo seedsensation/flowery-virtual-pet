@@ -1,7 +1,9 @@
 extends MovableWindow
 
 enum Status { IDLE, FALLING, WALKING, FLYING, OUT_OF_BOUNDS, MID_ANIMATION, GRABBED}
-enum Size { TINY, SMALL, MEDIUM, BIG, HUGE}
+
+@export 
+var size: int = 3
 
 const IGNORE_FLIP_WHEN = [Status.OUT_OF_BOUNDS, Status.GRABBED]
 
@@ -72,8 +74,7 @@ var clipped = false
 var lady = true
 @export
 var king = true
-@export
-var size: Size = Size.MEDIUM
+
 
 var drag_offset = Vector2()
 var fall_variant = 1
@@ -102,17 +103,7 @@ var animation_offsets = {
 func _ready() -> void:
 	area = $Sprite/Area
 	sprite = $Sprite
-	match size:
-				Size.TINY:
-					sprite.scale = Vector2(1, 1)
-				Size.SMALL:
-					sprite.scale = Vector2(2, 2)
-				Size.MEDIUM:
-					sprite.scale = Vector2(3, 3)
-				Size.BIG:
-					sprite.scale = Vector2(4, 4)
-				Size.HUGE:
-					sprite.scale = Vector2(5, 5)
+	sprite.scale = Vector2(size, size)
 	velocity = Vector2i(0,0)
 	acceleration = gravity
 	play_animation("Standing")
@@ -146,17 +137,7 @@ func _on_area_input(_viewport, event, _shape_idx):
 			var mouse_pos = Vector2(DisplayServer.mouse_get_position())
 			var win_pos = Vector2(DisplayServer.window_get_position())
 			#drag_offset = mouse_pos - win_pos
-			match size:
-				Size.TINY:
-					drag_offset = Vector2(11, 7)
-				Size.SMALL:
-					drag_offset = Vector2(25, 23)
-				Size.MEDIUM:
-					drag_offset = Vector2(37, 35)
-				Size.BIG:
-					drag_offset = Vector2(51, 51)
-				Size.HUGE:
-					drag_offset = Vector2(65, 65)
+			drag_offset = Vector2(get_shape().size.x / 2,11 * size)
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 		print(status)
 		#decide_next_action()
