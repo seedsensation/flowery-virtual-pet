@@ -133,9 +133,12 @@ func _on_area_input(_viewport, event, _shape_idx):
 						play_line(myGuy.pick_random(), true)
 			acceleration = Vector2()
 			play_animation("Grabbed")
+			temp_expand_window(Vector2(-200,0))
+			readjust_window_size()
+
 			velocity = Vector2()
-			var mouse_pos = Vector2(DisplayServer.mouse_get_position())
-			var win_pos = Vector2(DisplayServer.window_get_position())
+			#var mouse_pos = Vector2(DisplayServer.mouse_get_position())
+			#var win_pos = Vector2(DisplayServer.window_get_position())
 			#drag_offset = mouse_pos - win_pos
 			drag_offset = Vector2(get_shape().size.x / 2,11 * size)
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
@@ -148,6 +151,7 @@ func _on_area_input(_viewport, event, _shape_idx):
 func _unhandled_input(event):
 	if event is InputEventMouseButton:
 		if !event.pressed and event.button_index == MOUSE_BUTTON_LEFT and status == Status.GRABBED:
+			reset_temp_window_size()
 			velocity = Vector2(DisplayServer.mouse_get_position() - last_mouse_pos) * Vector2(25, 25)
 			acceleration = gravity
 			status = Status.FALLING
@@ -190,13 +194,13 @@ func check_animation_swap():
 		sprite.animation = "L "+sprite.animation
 		
 
-func set_offset() -> void:
+func set_offset(change_by = Vector2()) -> void:
 	if sprite.animation in animation_offsets.keys():
-		print("Adjusting offset to ", animation_offsets[sprite.animation], " for ", sprite.animation)
-		sprite.offset = animation_offsets[sprite.animation]
+		print("Adjusting offset to ", animation_offsets[sprite.animation] + change_by, " for ", sprite.animation)
+		sprite.offset = animation_offsets[sprite.animation] + change_by
 	else:
 		print("Resetting offset for ",sprite.animation)
-		sprite.offset = Vector2()
+		sprite.offset = change_by
 	
 
 
@@ -210,9 +214,11 @@ func _physics_process(delta: float) -> void:
 		# move him
 		if rotate_timer > 0.1:
 			if (DisplayServer.mouse_get_position().x - last_mouse_pos.x) > 6:
+				# right mouse movement, clockwise rotate
 				sprite.rotation_degrees = 20
 				rotate_timer = 0
 			elif (DisplayServer.mouse_get_position().x - last_mouse_pos.x) < -6:
+				# left mouse movement, anticlockwise rotate
 				sprite.rotation_degrees = -20
 				rotate_timer = 0
 			else:

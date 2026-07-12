@@ -11,6 +11,10 @@ struct MovableWindow {
 
     #[var]
     window_offset: Vector2,
+
+    #[var]
+    window_expanded_by: Vector2,
+
     #[export]
     /// The speed at which my boy moves
     velocity: Vector2,
@@ -30,7 +34,8 @@ impl INode2D for MovableWindow {
         Self {
             sprite: None,
             area: None,
-            window_offset: Vector2::new(0.0, 0.0),
+            window_offset: Vector2::ZERO,
+            window_expanded_by: Vector2::ZERO,
             ignore_collision: false,
             velocity: Vector2::new(1.0, 0.0),
             acceleration: Vector2::ZERO,
@@ -82,15 +87,15 @@ impl MovableWindow {
             Vector2i::new(
                 texture.get_width() * scale.cast_int().x,
                 texture.get_height() * scale.cast_int().y,
-            ) + (Vector2i::abs((offset * scale).cast_int())),
+            ) + (Vector2i::abs((offset * scale).cast_int() + self.window_expanded_by.cast_int())),
         );
 
-        if sprite.get_offset().x < 0.0 || offset.y < 0.0 {
+        if offset.x < 0.0 || offset.y < 0.0 {
             let offset_mul = offset * scale;
             sprite.set_position(Vector2::abs(offset * scale));
             self.move_to((position + offset_mul).cast_int());
         } else {
-            sprite.set_position(Vector2::ZERO);
+            sprite.set_position(self.window_offset);
         }
     }
 
@@ -107,6 +112,39 @@ impl MovableWindow {
             } else {
                 Vector2::ZERO
             }
+            + self.window_offset
+    }
+
+    #[func]
+    pub fn temp_expand_window(&mut self, expanded_by: Vector2) {
+        self.window_expanded_by = expanded_by;
+        self.window_offset = Vector2::new(
+            if expanded_by.x < 0.0 {
+                -expanded_by.x / 2.0
+            } else {
+                0.0
+            },
+            if expanded_by.y < 0.0 {
+                -expanded_by.y / 2.0
+            } else {
+                0.0
+            },
+        );
+
+        godot_print!(
+            "Window expanded by {}, offset set to {}",
+            self.window_expanded_by,
+            self.window_offset
+        );
+    }
+
+    #[func]
+    #[inline]
+    pub fn reset_temp_window_size(&mut self) {
+        let position = self.get_position().cast_int();
+        self.window_offset = Vector2::ZERO;
+        self.window_expanded_by = Vector2::ZERO;
+        self.move_to(position);
     }
 
     #[func]
@@ -165,7 +203,7 @@ impl MovableWindow {
     /// Move Flowery to a specific position
     pub fn move_to(&mut self, location: Vector2i) {
         let mut window = self.base().get_window().unwrap();
-        window.set_position(location);
+        window.set_position(location - self.window_offset.cast_int());
     }
 
     #[signal]

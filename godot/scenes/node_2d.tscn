@@ -4,14 +4,12 @@
 [ext_resource type="SpriteFrames" uid="uid://b04p35qttpw6h" path="res://sprites/flowery_sprites.tres" id="1_wtcfe"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0e48y"]
-size = Vector2(24.750015, 62.850044)
+size = Vector2(27.43752, 58.08754)
 
 [node name="Flowery" type="MovableWindow" unique_id=309334070]
 script = ExtResource("1_epypp")
-size = 10
 
 [node name="Sprite" type="AnimatedSprite2D" parent="." unique_id=2084256793]
-clip_children = 2
 texture_filter = 1
 texture_repeat = 1
 position = Vector2(-1, -1)
@@ -26,7 +24,7 @@ position = Vector2(-60.999996, -58.999996)
 scale = Vector2(0.39999998, 0.39999998)
 
 [node name="Collision" type="CollisionShape2D" parent="Sprite/Area" unique_id=548573054]
-position = Vector2(196.87503, 227.5)
+position = Vector2(213.12502, 226.87502)
 scale = Vector2(2.4999983, 2.4999983)
 shape = SubResource("RectangleShape2D_0e48y")
 
