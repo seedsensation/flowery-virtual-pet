@@ -142,7 +142,6 @@ func _on_area_input(_viewport, event, _shape_idx):
 			#drag_offset = mouse_pos - win_pos
 			drag_offset = Vector2(get_shape().size.x / 2,11 * size)
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
-		print(status)
 		#decide_next_action()
 		enter_flying()
 
@@ -196,10 +195,8 @@ func check_animation_swap():
 
 func set_offset(change_by = Vector2()) -> void:
 	if sprite.animation in animation_offsets.keys():
-		print("Adjusting offset to ", animation_offsets[sprite.animation] + change_by, " for ", sprite.animation)
 		sprite.offset = animation_offsets[sprite.animation] + change_by
 	else:
-		print("Resetting offset for ",sprite.animation)
 		sprite.offset = change_by
 	
 
@@ -226,13 +223,12 @@ func _physics_process(delta: float) -> void:
 				rotate_timer = 0
 		self.move_to(Vector2(DisplayServer.mouse_get_position()) - drag_offset)
 		last_mouse_pos = DisplayServer.mouse_get_position()
-		await get_tree().process_frame
 
 	else:
 		sprite.rotation_degrees = 0
-		if touching_top_side() and idle_timer > 4 and status == Status.FALLING:
+		#if touching_top_side() and idle_timer > 4 and status == Status.FALLING:
 
-			return_from_offscreen()
+		#	return_from_offscreen()
 			
 		if !frozen:
 			self.move_and_slide(delta)
@@ -302,7 +298,6 @@ func return_from_offscreen() -> void:
 	play_animation("Walking")
 
 	
-	print(get_shape().position)
 	acceleration = Vector2()
 	velocity = Vector2(100,0)
 	await get_tree().create_timer(2).timeout
@@ -395,11 +390,9 @@ func _on_screen_border_collision(up: bool, right: bool, down: bool, left: bool) 
 		if status == Status.WALKING:
 			
 			var current_position = get_position()
-			print(current_position)
 			current_position.x -= velocity.x / 9.5
 			await get_tree().process_frame
 			move_to(current_position)
-			print(get_position())
 		else:
 			velocity = velocity * Vector2(-1,1)
 			check_animation_swap()

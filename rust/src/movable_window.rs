@@ -150,6 +150,9 @@ impl MovableWindow {
     #[func]
     /// Move Flowery, and handle collision
     pub fn move_and_slide(&mut self, delta: f64) {
+        if self.velocity == Vector2::ZERO && self.acceleration == Vector2::ZERO {
+            return;
+        }
         let mut window = self.base().get_window().unwrap();
         let display_server = DisplayServer::singleton();
 
