@@ -1,3 +1,8 @@
+// Set clippy lints - I want this code to be as solid as possible,
+// so i want clippy to be a pain
+#![warn(clippy::pedantic)]
+#![allow(clippy::cast_precision_loss)]
+#![allow(clippy::cast_possible_truncation)]
 use crate::vector_cast::VectorCast;
 use godot::classes::{AnimatedSprite2D, Area2D, DisplayServer};
 use godot::classes::{INode2D, Node2D};
@@ -61,6 +66,10 @@ impl MovableWindow {
             texture.get_size() * sprite.get_scale(),
         )
     }
+
+    #[func]
+    #[allow(unused)]
+    pub fn set_offset(&mut self, offset: Vector2) {}
 
     #[func]
     pub fn readjust_window_size(&mut self) {
