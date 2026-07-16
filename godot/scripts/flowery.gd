@@ -1,6 +1,6 @@
 extends MovableWindow
 
-enum Status { IDLE, FALLING, WALKING, FLYING, OUT_OF_BOUNDS, MID_ANIMATION, GRABBED}
+enum Status { IDLE, FALLING, WALKING, FLYING, FLYING_IDLE, OUT_OF_BOUNDS, MID_ANIMATION, GRABBED}
 
 @export 
 var size: int = 3
@@ -56,6 +56,10 @@ var jarona1 = preload("res://voicelines/jarona1.wav")
 var jarona2 = preload("res://voicelines/jarona2.wav")
 var jarona3 = preload("res://voicelines/jarona3.wav")
 var jarona4 = preload("res://voicelines/jarona4.wav")
+# transform
+var lend_power = preload("res://voicelines/lend_power.wav")
+var omega_flowery = preload("res://voicelines/omega_flowery.wav")
+var powers_combined = preload("res://voicelines/powers_combined.wav")
 
 var status: Status = Status.FALLING
 var idle_timer: float = 0
@@ -95,7 +99,7 @@ var animation_offsets = {
 	"Crouch" = Vector2(0, 13),
 	"L Crouch" = Vector2(0, 13),
 	"Fly Startup" = Vector2(0, 0),
-	"Fly Transition" = Vector2(-400, 0),
+	"Fly Transition" = Vector2(0, 0),
 	
 }
 
@@ -203,7 +207,8 @@ func set_offset(change_by = Vector2()) -> void:
 
 # run every tick
 func _physics_process(delta: float) -> void:
-	self.velocity += self.acceleration * delta
+	if self.acceleration != Vector2():
+		self.velocity += self.acceleration * delta
 	idle_timer += delta
 	rotate_timer += delta
 	# if he's being dragged
@@ -235,12 +240,14 @@ func _physics_process(delta: float) -> void:
 
 func decide_next_action() -> void:
 	idle_timer = 0
-	var actions = ["Stand","Walk","Fly","Jump"]
+	var actions = ["Stand","Walk","Fly","Fly_Idle","Jump"]
 	match status:
 		Status.IDLE:
 			actions.erase("Stand")
 		Status.WALKING:
 			actions.erase("Walk")
+		Status.FLYING_IDLE:
+			actions.erase("Fly")
 		Status.FLYING:
 			actions.erase("Fly")
 	
@@ -271,13 +278,14 @@ func enter_flying() -> void:
 	facing_left = false
 	velocity = Vector2()
 	acceleration = Vector2()
+	play_line([lend_power, omega_flowery, powers_combined].pick_random())
 	status = Status.MID_ANIMATION
 	play_animation("Fly Startup")
 	await sprite.animation_finished
 	play_animation("Fly Transition")
 	await sprite.animation_finished
 	play_animation("Fly Neutral")
-	status = Status.FLYING
+	status = Status.FLYING_IDLE
 
 func return_from_offscreen() -> void:
 	oob_check = -5
@@ -340,6 +348,7 @@ func play_line(line, override_playing: bool = false) -> void:
 		voice_line.stream = line
 		voice_line.play()
 		await voice_line.finished
+		frozen = false
 		voice_line.queue_free()
 
 func jarona_voice() -> Resource:
@@ -416,9 +425,20 @@ func _on_action_timer_timeout() -> void:
 				return_from_offscreen()
 		else:
 			oob_check = 0
-			if idle_timer > 20 and status != Status.FALLING:
-				decide_next_action()
-	if range(200).pick_random() == 5:
+			if idle_timer > 5 and status != Status.FALLING: #and range(30).pick_random() == 7:
+				match status:
+					Status.WALKING:
+						if range(15).pick_random() == 7:
+							decide_next_action()
+					Status.IDLE:
+						if range(20).pick_random() == 7:
+							decide_next_action()
+					_:
+						if range(30).pick_random() == 7:
+							decide_next_action()
+	if range(200).pick_random() == 7:
+		if status != Status.FALLING:
+			frozen = true
 		play_line([flesh, sustingus, mysterious_wind, flowers_blooms, all_according_to_plant, I_found_a_glue, your_dads_my_best_friend, glue, grown_like_a_turnip, leaf_it_to_me, suckle_it_up, thats_great, thats_my_dreams, this_guys_your_best_friend, jarona_voice()].pick_random())
 
 	pass # Replace with function body.

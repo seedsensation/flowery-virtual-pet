@@ -205,6 +205,14 @@ region = Rect2(70, 0, 53, 57)
 atlas = ExtResource("4_jxs0g")
 region = Rect2(15, 0, 53, 57)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_o7fpf"]
+atlas = ExtResource("1_qbebv")
+region = Rect2(1051, 42, 41, 58)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tbp50"]
+atlas = ExtResource("1_qbebv")
+region = Rect2(950, 42, 44, 58)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_dtj0l"]
 atlas = ExtResource("1_qbebv")
 region = Rect2(464, 40, 26, 60)
@@ -248,6 +256,14 @@ region = Rect2(351, 494, 39, 61)
 [sub_resource type="AtlasTexture" id="AtlasTexture_7y51k"]
 atlas = ExtResource("1_qbebv")
 region = Rect2(393, 494, 39, 61)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mo42d"]
+atlas = ExtResource("1_qbebv")
+region = Rect2(1095, 42, 41, 58)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j2rrr"]
+atlas = ExtResource("1_qbebv")
+region = Rect2(997, 42, 44, 58)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0e48y"]
 atlas = ExtResource("1_qbebv")
@@ -539,6 +555,22 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_o7fpf")
+}],
+"loop": 1,
+"name": &"L Point",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tbp50")
+}],
+"loop": 1,
+"name": &"L Pose",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_dtj0l")
 }, {
 "duration": 1.0,
@@ -583,6 +615,22 @@ animations = [{
 }],
 "loop": 1,
 "name": &"Mysterious Wind",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mo42d")
+}],
+"loop": 1,
+"name": &"Point",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j2rrr")
+}],
+"loop": 1,
+"name": &"Pose",
 "speed": 5.0
 }, {
 "frames": [{
