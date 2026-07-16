@@ -94,8 +94,9 @@ var animation_offsets = {
 	"L Walking" = Vector2(0,2),
 	"Crouch" = Vector2(0, 13),
 	"L Crouch" = Vector2(0, 13),
-	"Fly Startup" = Vector2(0, 0),
-	"Fly Transition" = Vector2(-400, 0),
+	"Fly Startup" = Vector2(0, -15),
+	"Fly Transition" = Vector2(-34, -11),
+	"Fly Neutral" = Vector2(0,0),
 	
 }
 
@@ -193,9 +194,9 @@ func check_animation_swap():
 
 func set_animation_offset(change_by = Vector2()) -> void:
 	if sprite.animation in animation_offsets.keys():
-		sprite.offset = animation_offsets[sprite.animation] + change_by
+		offset = animation_offsets[sprite.animation] + change_by
 	else:
-		sprite.offset = change_by
+		offset = change_by
 	
 
 
@@ -346,7 +347,8 @@ func jarona_voice() -> Resource:
 func move_to_taskbar() -> void:
 	play_animation("Standing")
 	await get_tree().process_frame
-	move_to(Vector2i(int(get_shape().position.x), DisplayServer.screen_get_usable_rect().end.y - int(get_shape().size.y)))
+	position.y = int(DisplayServer.screen_get_usable_rect().size.y - get_shape().size.y)
+	
 
 
 func _on_screen_border_collision(up: bool, right: bool, down: bool, left: bool) -> void:

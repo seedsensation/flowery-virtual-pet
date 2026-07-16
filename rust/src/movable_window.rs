@@ -6,22 +6,33 @@ use godot::prelude::*;
 #[derive(GodotClass)]
 #[class(base=Node2D)]
 pub struct MovableWindow {
-    pub window_offset: Vector2,
+    #[var(pub, set = set_offset)]
+    pub offset: Vector2,
+
+    #[var(get = get_position, set = set_position)]
+    pub position: Vector2,
 
     #[var(pub)]
     pub ignore_collision: bool,
+
     #[export]
     #[var(pub)]
-    /// The speed at which my boy moves
+    /// The speed at which the character moves
     pub velocity: Vector2,
+
     #[export]
     #[var(pub)]
-    /// How much he accelerates by
+    /// How much the character accelerates by
     pub acceleration: Vector2,
+
     #[var(pub)]
+    /// The animated sprite that represents the character
     pub sprite: Option<Gd<AnimatedSprite2D>>,
+
     #[var(pub)]
+    /// The collision area
     pub area: Option<Gd<Area2D>>,
+
     /// The class that this inherits from
     pub base: Base<Node2D>,
 }
@@ -30,7 +41,8 @@ pub struct MovableWindow {
 impl INode2D for MovableWindow {
     fn init(base: Base<Node2D>) -> Self {
         Self {
-            window_offset: Vector2::ZERO,
+            offset: Vector2::ZERO,
+            position: Vector2::ZERO,
             sprite: None,
             area: None,
             ignore_collision: false,
@@ -58,50 +70,15 @@ impl MovableWindow {
             .unwrap()
             .get_frame_texture(&animation, 0)
             .unwrap();
-        Rect2::new(
-            self.base()
-                .get_window()
-                .unwrap()
-                .get_position()
-                .to_flt_vector(),
-            texture.get_size() * sprite.get_scale(),
-        )
+        Rect2::new(self.get_position(), texture.get_size() * sprite.get_scale())
     }
 
     #[func]
-    #[allow(unused)]
-    /// Sets the sprite's offset.
-    ///
-    /// This is a lot more difficult than you'd expect, so I'm going to go through it step-by-step.
-    ///
-    /// It receives an offset. The offset's `x` and `y` can be either positive or negative.
-    ///
-    /// This is done for both `x` and `y`:
-    ///
-    /// # IF POSITIVE
-    /// - Expand the window that many pixels right/down
-    /// - Move the sprite that many pixels left/up
-    ///
-    /// # IF NEGATIVE
-    /// - Expand the window that many pixels right/down
-    /// - Move the sprite that many pixels right/down
-    /// - Move the window that many pixels left/up
-    ///
-    /// If the offset is **positive**, the **left side** of the sprite should keep the same
-    /// distance from the left side of the window.
-    ///
-    /// If the offset is **negative**, the **right side** of the sprite should keep the same
-    /// distance from the right side of the window.
-    ///
-    /// The struct member [`Self::window_offset`] tracks how much the window has moved,
-    /// so that the movement can be reversed once the offset is undone.
-    ///
-    /// All functions that set or read the window's position _must be_ updated to take
-    /// `window_offset` into account.
     pub fn set_offset(&mut self, offset: Vector2) {
-        let mut window_position = self.get_position();
-        let mut window_size = self.get_shape().size;
-        let mut sprite_position = self.sprite.as_ref().unwrap().get_position();
+        let old_position = self.get_position();
+        godot_print!("Setting offset to {offset}");
+        self.offset = offset * self.sprite.as_ref().unwrap().get_scale();
+        self.set_position(old_position);
     }
 
     #[func]
@@ -121,12 +98,14 @@ impl MovableWindow {
     }
 
     #[func]
+    #[inline]
     pub fn get_position(&self) -> Vector2 {
         self.base()
             .get_window()
             .unwrap()
             .get_position()
             .to_flt_vector()
+            - self.offset
     }
 
     #[func]
@@ -185,10 +164,19 @@ impl MovableWindow {
     }
 
     #[func]
+    #[inline]
     /// Move Flowery to a specific position
     pub fn move_to(&mut self, location: Vector2i) {
-        let mut window = self.base().get_window().unwrap();
-        window.set_position(location);
+        self.base()
+            .get_window()
+            .unwrap()
+            .set_position(location + self.offset.cast_int());
+    }
+
+    #[func]
+    #[inline]
+    pub fn set_position(&mut self, location: Vector2) {
+        self.move_to(location.cast_int())
     }
 
     #[signal]
