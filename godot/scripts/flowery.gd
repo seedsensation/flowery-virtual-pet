@@ -133,7 +133,6 @@ func _on_area_input(_viewport, event, _shape_idx):
 						play_line(myGuy.pick_random(), true)
 			acceleration = Vector2()
 			play_animation("Grabbed")
-			temp_expand_window(Vector2(-200,0))
 			readjust_window_size()
 
 			velocity = Vector2()
@@ -150,7 +149,6 @@ func _on_area_input(_viewport, event, _shape_idx):
 func _unhandled_input(event):
 	if event is InputEventMouseButton:
 		if !event.pressed and event.button_index == MOUSE_BUTTON_LEFT and status == Status.GRABBED:
-			reset_temp_window_size()
 			velocity = Vector2(DisplayServer.mouse_get_position() - last_mouse_pos) * Vector2(25, 25)
 			acceleration = gravity
 			status = Status.FALLING
