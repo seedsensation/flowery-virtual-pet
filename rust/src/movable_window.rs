@@ -6,27 +6,31 @@ use godot::prelude::*;
 #[derive(GodotClass)]
 #[class(base=Node2D)]
 pub struct MovableWindow {
+    pub window_offset: Vector2,
+
     #[var(pub)]
-    ignore_collision: bool,
+    pub ignore_collision: bool,
     #[export]
     #[var(pub)]
     /// The speed at which my boy moves
-    velocity: Vector2,
+    pub velocity: Vector2,
     #[export]
     #[var(pub)]
     /// How much he accelerates by
-    acceleration: Vector2,
+    pub acceleration: Vector2,
     #[var(pub)]
-    sprite: Option<Gd<AnimatedSprite2D>>,
+    pub sprite: Option<Gd<AnimatedSprite2D>>,
     #[var(pub)]
-    area: Option<Gd<Area2D>>,
-    base: Base<Node2D>,
+    pub area: Option<Gd<Area2D>>,
+    /// The class that this inherits from
+    pub base: Base<Node2D>,
 }
 
 #[godot_api]
 impl INode2D for MovableWindow {
     fn init(base: Base<Node2D>) -> Self {
         Self {
+            window_offset: Vector2::ZERO,
             sprite: None,
             area: None,
             ignore_collision: false,
@@ -69,7 +73,36 @@ impl MovableWindow {
     /// Sets the sprite's offset.
     ///
     /// This is a lot more difficult than you'd expect, so I'm going to go through it step-by-step.
-    pub fn set_offset(&mut self, offset: Vector2) {}
+    ///
+    /// It receives an offset. The offset's `x` and `y` can be either positive or negative.
+    ///
+    /// This is done for both `x` and `y`:
+    ///
+    /// # IF POSITIVE
+    /// - Expand the window that many pixels right/down
+    /// - Move the sprite that many pixels left/up
+    ///
+    /// # IF NEGATIVE
+    /// - Expand the window that many pixels right/down
+    /// - Move the sprite that many pixels right/down
+    /// - Move the window that many pixels left/up
+    ///
+    /// If the offset is **positive**, the **left side** of the sprite should keep the same
+    /// distance from the left side of the window.
+    ///
+    /// If the offset is **negative**, the **right side** of the sprite should keep the same
+    /// distance from the right side of the window.
+    ///
+    /// The struct member [`Self::window_offset`] tracks how much the window has moved,
+    /// so that the movement can be reversed once the offset is undone.
+    ///
+    /// All functions that set or read the window's position _must be_ updated to take
+    /// `window_offset` into account.
+    pub fn set_offset(&mut self, offset: Vector2) {
+        let mut window_position = self.get_position();
+        let mut window_size = self.get_shape().size;
+        let mut sprite_position = self.sprite.as_ref().unwrap().get_position();
+    }
 
     #[func]
     pub fn readjust_window_size(&mut self) {
