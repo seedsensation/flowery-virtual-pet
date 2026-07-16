@@ -98,8 +98,9 @@ var animation_offsets = {
 	"L Walking" = Vector2(0,2),
 	"Crouch" = Vector2(0, 13),
 	"L Crouch" = Vector2(0, 13),
-	"Fly Startup" = Vector2(0, 0),
-	"Fly Transition" = Vector2(0, 0),
+	"Fly Startup" = Vector2(0, -15),
+	"Fly Transition" = Vector2(-34, -11),
+	"Fly Neutral" = Vector2(0,0),
 	
 }
 
@@ -137,7 +138,6 @@ func _on_area_input(_viewport, event, _shape_idx):
 						play_line(myGuy.pick_random(), true)
 			acceleration = Vector2()
 			play_animation("Grabbed")
-			temp_expand_window(Vector2(-200,0))
 			readjust_window_size()
 
 			velocity = Vector2()
@@ -154,7 +154,6 @@ func _on_area_input(_viewport, event, _shape_idx):
 func _unhandled_input(event):
 	if event is InputEventMouseButton:
 		if !event.pressed and event.button_index == MOUSE_BUTTON_LEFT and status == Status.GRABBED:
-			reset_temp_window_size()
 			velocity = Vector2(DisplayServer.mouse_get_position() - last_mouse_pos) * Vector2(25, 25)
 			acceleration = gravity
 			status = Status.FALLING
@@ -180,7 +179,7 @@ func play_animation(animation_name: String) -> void:
 		sprite.play("L "+animation_name)
 	else:
 		sprite.play(animation_name)
-	set_offset()
+	set_animation_offset()
 	readjust_window_size()
 	
 func check_animation_swap():
@@ -197,11 +196,11 @@ func check_animation_swap():
 		sprite.animation = "L "+sprite.animation
 		
 
-func set_offset(change_by = Vector2()) -> void:
+func set_animation_offset(change_by = Vector2()) -> void:
 	if sprite.animation in animation_offsets.keys():
-		sprite.offset = animation_offsets[sprite.animation] + change_by
+		offset = animation_offsets[sprite.animation] + change_by
 	else:
-		sprite.offset = change_by
+		offset = change_by
 	
 
 
@@ -357,7 +356,8 @@ func jarona_voice() -> Resource:
 func move_to_taskbar() -> void:
 	play_animation("Standing")
 	await get_tree().process_frame
-	move_to(Vector2i(int(get_shape().position.x), DisplayServer.screen_get_usable_rect().end.y - int(get_shape().size.y)))
+	position.y = int(DisplayServer.screen_get_usable_rect().size.y - get_shape().size.y)
+	
 
 
 func _on_screen_border_collision(up: bool, right: bool, down: bool, left: bool) -> void:

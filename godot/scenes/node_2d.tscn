@@ -8,6 +8,10 @@ size = Vector2(27.43752, 58.08754)
 
 [node name="Flowery" type="MovableWindow" unique_id=309334070]
 script = ExtResource("1_epypp")
+size = null
+lady = null
+king = null
+animation_offsets = null
 
 [node name="Sprite" type="AnimatedSprite2D" parent="." unique_id=2084256793]
 texture_filter = 1
