@@ -9,10 +9,8 @@ struct MovableWindow {
     #[var]
     ignore_collision: bool,
 
-    #[var]
     window_offset: Vector2,
 
-    #[var]
     window_expanded_by: Vector2,
 
     #[export]
@@ -83,13 +81,35 @@ impl MovableWindow {
             .get_frame_texture(&sprite.get_animation().to_string(), 0)
             .unwrap();
 
+        if self.window_expanded_by.is_zero_approx() && self.window_offset.is_zero_approx() {
+            self.window_expanded_by = Vector2::new(
+                if offset.x < 0.0 {
+                    f32::abs(offset.x)
+                } else {
+                    0.0
+                },
+                if offset.y < 0.0 {
+                    f32::abs(offset.x)
+                } else {
+                    0.0
+                },
+            );
+            self.window_offset = -self.window_expanded_by;
+        }
+
+        if offset == Vector2::ZERO {
+            self.window_offset = Vector2::ZERO;
+            self.window_expanded_by = Vector2::ZERO;
+        }
+
+        sprite.set_offset(Vector2::abs(offset));
+
         DisplayServer::singleton().window_set_size(
             Vector2i::new(
                 texture.get_width() * scale.cast_int().x,
                 texture.get_height() * scale.cast_int().y,
             ) + (Vector2i::abs((offset * scale).cast_int() + self.window_expanded_by.cast_int())),
         );
-
         if offset.x < 0.0 || offset.y < 0.0 {
             let offset_mul = offset * scale;
             sprite.set_position(Vector2::abs(offset * scale));
@@ -118,18 +138,8 @@ impl MovableWindow {
     #[func]
     pub fn temp_expand_window(&mut self, expanded_by: Vector2) {
         self.window_expanded_by = expanded_by;
-        self.window_offset = Vector2::new(
-            if expanded_by.x < 0.0 {
-                -expanded_by.x / 2.0
-            } else {
-                0.0
-            },
-            if expanded_by.y < 0.0 {
-                -expanded_by.y / 2.0
-            } else {
-                0.0
-            },
-        );
+        self.window_offset =
+            Vector2::new(f32::abs(expanded_by.x) / 2.0, f32::abs(expanded_by.y) / 2.0);
 
         godot_print!(
             "Window expanded by {}, offset set to {}",
@@ -145,6 +155,7 @@ impl MovableWindow {
         self.window_offset = Vector2::ZERO;
         self.window_expanded_by = Vector2::ZERO;
         self.move_to(position);
+        self.sprite.as_mut().unwrap().set_position(Vector2::ZERO);
     }
 
     #[func]
