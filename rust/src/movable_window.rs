@@ -10,18 +10,20 @@ use godot::prelude::*;
 
 #[derive(GodotClass)]
 #[class(base=Node2D)]
-struct MovableWindow {
-    #[var]
+pub struct MovableWindow {
+    #[var(pub)]
     ignore_collision: bool,
     #[export]
+    #[var(pub)]
     /// The speed at which my boy moves
     velocity: Vector2,
     #[export]
+    #[var(pub)]
     /// How much he accelerates by
     acceleration: Vector2,
-    #[var]
+    #[var(pub)]
     sprite: Option<Gd<AnimatedSprite2D>>,
-    #[var]
+    #[var(pub)]
     area: Option<Gd<Area2D>>,
     base: Base<Node2D>,
 }
@@ -69,6 +71,9 @@ impl MovableWindow {
 
     #[func]
     #[allow(unused)]
+    /// Sets the sprite's offset.
+    ///
+    /// This is a lot more difficult than you'd expect, so I'm going to go through it step-by-step.
     pub fn set_offset(&mut self, offset: Vector2) {}
 
     #[func]

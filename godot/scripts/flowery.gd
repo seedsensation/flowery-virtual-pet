@@ -174,7 +174,7 @@ func play_animation(animation_name: String) -> void:
 		sprite.play("L "+animation_name)
 	else:
 		sprite.play(animation_name)
-	set_offset()
+	set_animation_offset()
 	readjust_window_size()
 	
 func check_animation_swap():
@@ -191,7 +191,7 @@ func check_animation_swap():
 		sprite.animation = "L "+sprite.animation
 		
 
-func set_offset(change_by = Vector2()) -> void:
+func set_animation_offset(change_by = Vector2()) -> void:
 	if sprite.animation in animation_offsets.keys():
 		sprite.offset = animation_offsets[sprite.animation] + change_by
 	else:

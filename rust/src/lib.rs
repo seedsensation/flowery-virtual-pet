@@ -1,7 +1,7 @@
 use godot::prelude::*;
 
-mod movable_window;
-mod vector_cast;
+pub mod movable_window;
+pub mod vector_cast;
 
 struct MyExtension;
 
